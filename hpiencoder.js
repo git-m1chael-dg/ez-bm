@@ -60,7 +60,7 @@
         }
     };
 
-    var appRoot = 'http://localhost:800/ez-bm/';
+    var appRoot = 'http://ez-bm.apphb.com/';
 
     // Loading style definitions
     loadStyles([
