@@ -14,16 +14,20 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
     }
 }
 
-
 angular.module('hpi-encoder', [])
     .controller('hpiEncoderController', function ($scope, $http, $timeout,toaster) {
 
         var self = this;
-        self.postUrl = "http://hpidirectsales.ph/signup-reentry.php?page_id=88";
+        self.newentryPostUrl = "http://hpidirectsales.ph/signup-newentry.php?page_id=88";
+        self.reentryPostUrl = "http://hpidirectsales.ph/signup-reentry.php?page_id=88";
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
         self.isDone = true;
 
+        $scope.entry = "new entry";
+        $scope.entries = ["new entry","re entry"];
+
+        $scope.uplineUserCode = '';
         $scope.firstName = '';
         $scope.middleName = '';
         $scope.lastName = '';
@@ -51,14 +55,11 @@ angular.module('hpi-encoder', [])
             validateActivationCodes();
         };
         $scope.Encode = function () {
-
-            MakeUpperCase();
+            makeUpperCase();
 
             if (validateInput()) {
                 self.isDone = false;
-
                 self.currentRequestIndex = 0;
-
                 next();
             }
         };
@@ -68,16 +69,17 @@ angular.module('hpi-encoder', [])
             if (validateInput() && index < $scope.accounts.length) {
 
                 var account = $scope.accounts[index];
-                MakeUpperCase();
+                makeUpperCase();
                 account.MakeUpperCase();
 
                 var postdata = getPostData(account);
 
                 checkUserName(account, function () {
-                    $http.post(self.postUrl, postdata).
+                    var url = IsNewEntry() ? self.newentryPostUrl : self.reentryPostUrl;
+                    $http.post(url, postdata).
                         success(function (data) {
                             self.isDone = true;
-                            if (IsSuccess(account, data)){
+                            if (isSuccess(account, data)){
                                 log("Success. User code : " + account.UserCode);
                                 popsuccess("Success. User code : " + account.UserCode);
                             }
@@ -88,33 +90,71 @@ angular.module('hpi-encoder', [])
                             self.isDone = true;
                         });
                 });
-
-
             }
-
         };
 
+        $scope.ActivationCodeChange = function (index) {
+            index--;
+            if (index < $scope.accounts.length) {
+
+                var account = $scope.accounts[index];
+
+                validateActivationCode(account);
+            }
+        };
+
+        function IsNewEntry(){
+            return $scope.entry == "new entry";
+        }
+
         function getPostData(account) {
-            return {
-                iacno: account.UserCode,
-                pass: $scope.password,
-                vpass: $scope.password,
-                lname: $scope.lastName,
-                frname: $scope.firstName,
-                mname: $scope.middleName,
-                sponsor: account.ReferredBy,
-                actpin: account.ActivationCode,
-                txtpostkey: 'Y',
-                cmdSend: 'SAVE'
-            };
+            if(IsNewEntry())
+                return {
+                    main_upline: $scope.uplineUserCode,
+                    iacno: account.UserCode,
+                    pass: $scope.password,
+                    vpass: $scope.password,
+                    lname: $scope.lastName,
+                    frname: $scope.firstName,
+                    mname: $scope.middleName,
+                    sponsor: account.ReferredBy,
+                    actpin: account.ActivationCode,
+                    txtpostkey: 'Y',
+                    cmdSend: 'SAVE'
+                };
+            else
+                return {
+                    iacno: account.UserCode,
+                    pass: $scope.password,
+                    vpass: $scope.password,
+                    lname: $scope.lastName,
+                    frname: $scope.firstName,
+                    mname: $scope.middleName,
+                    sponsor: account.ReferredBy,
+                    actpin: account.ActivationCode,
+                    txtpostkey: 'Y',
+                    cmdSend: 'SAVE'
+                };
         }
 
         function validateInput() {
             var result = $scope.firstName && $scope.middleName && $scope.lastName &&
                 $scope.password;
+
+            if(IsNewEntry())
+                result = result && $scope.uplineUserCode;
+
             if (!result){
-                log("Username, last name, first name and middle name are required fields");
-                poperror("Username, last name, first name and middle name are required fields");
+                if(IsNewEntry()){
+                    var msg ="Upline user code, username, last name, first name and middle name are required fields";
+                    log(msg);
+                    poperror(msg);
+                }else{
+                    var msg ="Username, last name, first name and middle name are required fields";
+                    log(msg);
+                    poperror(msg);
+                }
+
             }
             /*else
              {
@@ -176,12 +216,13 @@ angular.module('hpi-encoder', [])
         }
 
         function doPost(account, postdata) {
-            $http.post(self.postUrl, postdata).
+            var url = IsNewEntry() ? self.newentryPostUrl : self.reentryPostUrl;
+            $http.post(url, postdata).
 
                 success(function (data) {
                     log("Success. User code : " + account.UserCode);
                     self.currentRequestIndex++;
-                    if (IsSuccess(account, data) && self.currentRequestIndex < $scope.accounts.length) {
+                    if (isSuccess(account, data) && self.currentRequestIndex < $scope.accounts.length) {
                         next();
                     } else
                         self.isDone = true;
@@ -192,17 +233,7 @@ angular.module('hpi-encoder', [])
                 });
         }
 
-        $scope.ActivationCodeChange = function (index) {
-            index--;
-            if (index < $scope.accounts.length) {
-
-                var account = $scope.accounts[index];
-
-                ValidateActivationCode(account);
-            }
-        };
-
-        function ValidateActivationCode(account) {
+        function validateActivationCode(account) {
 
             account.ActivationCode = account.ActivationCode.trim();
             //valid code
@@ -227,7 +258,7 @@ angular.module('hpi-encoder', [])
             var isValid = true;
 
             angular.forEach($scope.accounts, function (account) {
-                if (!ValidateActivationCode(account))
+                if (!validateActivationCode(account))
                     isValid = false;
             });
 
@@ -241,7 +272,7 @@ angular.module('hpi-encoder', [])
 
         var pattern = /<span class="style20">([A-Za-z\. ]+)<\/span>/;
 
-        function IsSuccess(account, response) {
+        function isSuccess(account, response) {
             var m;
             if ((m = pattern.exec(response)) !== null) {
                 var message = m[1];
@@ -253,12 +284,12 @@ angular.module('hpi-encoder', [])
             return account.WasEncoded;
         }
 
-        function MakeUpperCase() {
+        function makeUpperCase() {
+            $scope.uplineUserCode = $scope.uplineUserCode.toUpperCase().trim();
             $scope.firstName = $scope.firstName.toUpperCase().trim();
             $scope.middleName = $scope.firstName.toUpperCase().trim();
             $scope.lastName = $scope.firstName.toUpperCase().trim();
         }
-
 
         function log(msg) {
             $scope.logs.push(msg);
@@ -331,6 +362,14 @@ template += "                        <\/h3>";
 template += "                    <\/div>";
 template += "                    <div class=\"panel-body\">";
 template += "                        <form role=\"form\">";
+template += "                            <div class=\"form-group\">";
+template += "                                <label>New Entry Or Re-Entry<\/label>";
+template += "                                <select ng-model=\"entry\" class=\"form-control\" ng-options=\"entry for entry in entries\"><\/select>";
+template += "                            <\/div>";
+template += "                            <div class=\"form-group\" ng-show=\"entry == 'new entry'\">";
+template += "                                <label for=\"uplineUserCode\">Your Upline User Code<\/label>";
+template += "                                <input type=\"text\" id=\"uplineUserCode\" class=\"form-control\" placeholder=\"Your Upline User Code\" ng-model=\"uplineUserCode\"\/>";
+template += "                            <\/div>";
 template += "                            <div class=\"form-group\">";
 template += "                                <label for=\"firstName\">First Name<\/label>";
 template += "                                <input type=\"text\" id=\"firstName\" class=\"form-control\" placeholder=\"First Name\" ng-model=\"firstName\"\/>";
@@ -414,7 +453,7 @@ template += "                            Logs";
 template += "                        <\/h3>";
 template += "                    <\/div>";
 template += "                    <div class=\"panel-body\">";
-template += "                        <span ng-repeat=\"log in logs track by $index\">{{log}}<\/span>";
+template += "                        <il ng-repeat=\"log in logs track by $index\"><span>{{log}}<\/span><\/il>";
 template += "                    <\/div>";
 template += "                <\/div>";
 template += "            <\/div>";

@@ -33,6 +33,14 @@
                     <div class="panel-body">
                         <form role="form">
                             <div class="form-group">
+                                <label>New Entry Or Re-Entry</label>
+                                <select ng-model="entry" class="form-control" ng-options="entry for entry in entries"></select>
+                            </div>
+                            <div class="form-group" ng-show="entry == 'new entry'">
+                                <label for="uplineUserCode">Your Upline User Code</label>
+                                <input type="text" id="uplineUserCode" class="form-control" placeholder="Your Upline User Code" ng-model="uplineUserCode"/>
+                            </div>
+                            <div class="form-group">
                                 <label for="firstName">First Name</label>
                                 <input type="text" id="firstName" class="form-control" placeholder="First Name" ng-model="firstName"/>
                             </div>
@@ -115,7 +123,7 @@
                         </h3>
                     </div>
                     <div class="panel-body">
-                        <span ng-repeat="log in logs track by $index">{{log}}</span>
+                        <il ng-repeat="log in logs track by $index"><span>{{log}}</span></il>
                     </div>
                 </div>
             </div>
