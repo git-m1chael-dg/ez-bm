@@ -5,7 +5,7 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
     self.ReferredBy = referredBy;
     self.ActivationCode = activationCode;
     self.Status = status;
-    self.wasEncoded = wasEncoded;
+    self.WasEncoded = wasEncoded;
 
     self.MakeUpperCase = function () {
         self.UserCode = self.UserCode.toUpperCase();
@@ -16,7 +16,7 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
 
 
 angular.module('hpi-encoder', [])
-    .controller('hpiEncoderController', function ($scope, $http, $timeout) {
+    .controller('hpiEncoderController', function ($scope, $http, $timeout,toaster) {
 
         var self = this;
         self.postUrl = "http://hpidirectsales.ph/signup-reentry.php?page_id=88";
@@ -41,8 +41,10 @@ angular.module('hpi-encoder', [])
                 var data = allTextLines[i].split(',');
                 if (data.length == 3 && data[0] && data[1] && data[2])
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
-                else
+                else{
+                    popwarning("Invalid data was found  at line " + index);
                     log("Invalid data was found  at line " + index);
+                }
                 index++;
             }
 
@@ -75,11 +77,14 @@ angular.module('hpi-encoder', [])
                     $http.post(self.postUrl, postdata).
                         success(function (data) {
                             self.isDone = true;
-                            if (IsSuccess(account, data))
+                            if (IsSuccess(account, data)){
                                 log("Success. User code : " + account.UserCode);
+                                popsuccess("Success. User code : " + account.UserCode);
+                            }
                         }).
                         error(function () {
                             log("Failure. User code : " + account.UserCode);
+                            poperror("Failure. User code : " + account.UserCode);
                             self.isDone = true;
                         });
                 });
@@ -107,8 +112,10 @@ angular.module('hpi-encoder', [])
         function validateInput() {
             var result = $scope.firstName && $scope.middleName && $scope.lastName &&
                 $scope.password;
-            if (!result)
+            if (!result){
                 log("Username, last name, first name and middle name are required fields");
+                poperror("Username, last name, first name and middle name are required fields");
+            }
             /*else
              {
              result = $scope.password < 6;
@@ -154,7 +161,7 @@ angular.module('hpi-encoder', [])
         function makeNextRequest() {
             if (self.currentRequestIndex < $scope.accounts.length) {
                 var account = $scope.accounts[self.currentRequestIndex];
-                if (account.wasEncoded) {
+                if (account.WasEncoded) {
                     self.currentRequestIndex++;
                     next();
                     return;
@@ -239,11 +246,11 @@ angular.module('hpi-encoder', [])
             if ((m = pattern.exec(response)) !== null) {
                 var message = m[1];
 
-                account.wasEncoded = /successful/i.test(message);
+                account.WasEncoded = /successful/i.test(message);
                 account.Status = message;
             }
 
-            return account.wasEncoded;
+            return account.WasEncoded;
         }
 
         function MakeUpperCase() {
@@ -258,6 +265,30 @@ angular.module('hpi-encoder', [])
             console.log(msg);
         }
 
+        function popwarning(msg) {
+            toaster.pop({
+                type: 'warning',
+                title: 'tatae ako',
+                body: msg,
+                showCloseButton: true
+            });
+        }
+        function poperror(msg) {
+            toaster.pop({
+                type: 'error',
+                title: 'teka may error',
+                body: msg,
+                showCloseButton: true
+            });
+        }
+        function popsuccess(msg) {
+            toaster.pop({
+                type: 'success',
+                title: 'ooppss',
+                body: msg,
+                showCloseButton: true
+            });
+        }
     })
     .directive('hpiEncoder', function () {
         return {
@@ -266,7 +297,8 @@ angular.module('hpi-encoder', [])
         };
     });
 
-var template = "";
+var template="";
+template += "<toaster-container toaster-options=\"{'time-out': 3000}\"><\/toaster-container>";
 template += "<div align=\"center\" style=\"background-color: white\">";
 template += "    <div class=\"container\">";
 template += "        <div class=\"row clearfix\">";
@@ -364,7 +396,7 @@ template += "                                <th>";
 template += "                                    <input type=\"checkbox\" ng-model=\"account.WasEncoded\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    <button ng-click=\"EncodeOneItem({{account.Index}})\" ng-disabled=\"done\">Encode<\/button>";
+template += "                                    <button ng-click=\"EncodeOneItem()\" ng-disabled=\"done\">Encode<\/button>";
 template += "                                <\/th>";
 template += "                            <\/tr>";
 template += "                            <\/tbody>";
@@ -382,17 +414,10 @@ template += "                            Logs";
 template += "                        <\/h3>";
 template += "                    <\/div>";
 template += "                    <div class=\"panel-body\">";
-template += "                        <li ng-repeat=\"log in logs track by $index\">";
-template += "                            <span>{{log}}<\/span>";
-template += "                        <\/li>";
+template += "                        <span ng-repeat=\"log in logs track by $index\">{{log}}<\/span>";
 template += "                    <\/div>";
 template += "                <\/div>";
 template += "            <\/div>";
 template += "        <\/div>";
 template += "    <\/div>";
 template += "<\/div>";
-
-
-
-
-

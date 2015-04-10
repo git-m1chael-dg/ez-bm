@@ -60,18 +60,23 @@
         }
     };
 
-    var appRoot = 'http://ez-bm.apphb.com/';
+    var prod = true;
+    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:800/ez-bm/';
+
 
     // Loading style definitions
     loadStyles([
         "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css",
-        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css"
+        "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css",
+        "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.css"
     ]);
 
     // Loading the scripts
     loadScripts([
-        'https://ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js',
+        "https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js",
+        "https://code.angularjs.org/1.2.0/angular-animate.min.js",
         "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js",
         appRoot + 'init.js',
         appRoot + 'controller.js'
     ], function() {
