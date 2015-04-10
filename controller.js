@@ -24,7 +24,8 @@ angular.module('hpi-encoder', [])
         self.currentRequestIndex = 0;
         self.isDone = true;
 
-        $scope.entry = "new entry";
+        $scope.isNewEntry = /signup-newentry.php/i.test(location.href);
+        $scope.entry = /signup-newentry.php/i.test(location.href) ? "new entry" : "re entry";
         $scope.entries = ["new entry","re entry"];
 
         $scope.uplineUserCode = '';
@@ -362,7 +363,7 @@ template += "                        <\/h3>";
 template += "                    <\/div>";
 template += "                    <div class=\"panel-body\">";
 template += "                        <form role=\"form\">";
-template += "                            <div class=\"form-group\">";
+template += "                            <div class=\"form-group\" ng-hide=\"true\">";
 template += "                                <label>New Entry Or Re-Entry<\/label>";
 template += "                                <select ng-model=\"entry\" class=\"form-control\" ng-options=\"entry for entry in entries\"><\/select>";
 template += "                            <\/div>";
