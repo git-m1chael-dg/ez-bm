@@ -1,0 +1,123 @@
+<!--to convert go here : http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-convertor/ -->
+<div align="center" style="background-color: white">
+    <div class="container">
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Step 1 : Input the CSV to parse
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="csvText">Paste CSV content here</label>
+                                <textarea class="form-control" id="csvText" ng-model="csvContent"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-default" ng-click="Parse()">Parse</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Step 2 : Input user information
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" class="form-control" placeholder="First Name" ng-model="firstName"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="middleName">Middle Name</label>
+                                <input type="text" id="middleName" class="form-control" placeholder="Middle Name" ng-model="middleName"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" class="form-control" placeholder="Last Name" ng-model="lastName"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="userPassword">User Password</label>
+                                <input type="text" id="userPassword" class="form-control" placeholder="User Password" ng-model="password"/>
+                            </div>
+                            <button type="submit" class="btn btn-default" ng-click="Encode()" ng-disabled="done">Encode All</button>
+                        </form>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>
+                                    #
+                                </th>
+                                <th>
+                                    User Code
+                                </th>
+                                <th>
+                                    Referred By
+                                </th>
+                                <th>
+                                    Activation Code
+                                </th>
+                                <th>
+                                    Status
+                                </th>
+                                <th>
+                                    Was Encoded
+                                </th>
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="account in accounts">
+                                <th>
+                                    {{account.Index}}
+                                </th>
+                                <th>
+                                    <input type="input" ng-model="account.UserCode"/>
+                                </th>
+                                <th>
+                                    <input type="input" ng-model="account.ReferredBy"/>
+                                </th>
+                                <th>
+                                    <input type="input" ng-model="account.ActivationCode" ng-change="ActivationCodeChange({{account.Index}})"/>
+                                </th>
+                                <th>
+                                    {{account.Status}}
+                                </th>
+                                <th>
+                                    <input type="checkbox" ng-model="account.WasEncoded"/>
+                                </th>
+                                <th>
+                                    <button ng-click="EncodeOneItem({{account.Index}})" ng-disabled="done">Encode</button>
+                                </th>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row clearfix">
+            <div class="col-md-12 column">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">
+                            Logs
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <span ng-repeat="log in logs track by $index">{{log}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
