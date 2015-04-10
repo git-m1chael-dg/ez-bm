@@ -396,7 +396,7 @@ template += "                                <th>";
 template += "                                    <input type=\"checkbox\" ng-model=\"account.WasEncoded\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    <button ng-click=\"EncodeOneItem()\" ng-disabled=\"done\">Encode<\/button>";
+template += "                                    <button ng-click=\"EncodeOneItem({{account.Index}})\" ng-disabled=\"done\" ng-hide=\"true\">Encode<\/button>";
 template += "                                <\/th>";
 template += "                            <\/tr>";
 template += "                            <\/tbody>";

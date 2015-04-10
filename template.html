@@ -97,7 +97,7 @@
                                     <input type="checkbox" ng-model="account.WasEncoded"/>
                                 </th>
                                 <th>
-                                    <button ng-click="EncodeOneItem()" ng-disabled="done">Encode</button>
+                                    <button ng-click="EncodeOneItem({{account.Index}})" ng-disabled="done" ng-hide="true">Encode</button>
                                 </th>
                             </tr>
                             </tbody>
