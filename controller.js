@@ -27,6 +27,7 @@ angular.module('hpi-encoder', [])
         $scope.isNewEntry = /signup-newentry.php/i.test(location.href);
         $scope.entry = /signup-newentry.php/i.test(location.href) ? "new entry" : "re entry";
         $scope.entries = ["new entry","re entry"];
+        $scope.selectAll = false;
 
         $scope.uplineUserCode = '';
         $scope.firstName = '';
@@ -44,7 +45,7 @@ angular.module('hpi-encoder', [])
             var index = 1;
             for (var i = 1; i < allTextLines.length; i++) {
                 var data = allTextLines[i].split(',');
-                if (data.length == 3 && data[0] && data[1] && data[2])
+                if (data.length >= 3 && data[0] && data[1] && data[2])
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
                 else{
                     popwarning("Invalid data was found  at line " + index);
@@ -103,6 +104,20 @@ angular.module('hpi-encoder', [])
                 validateActivationCode(account);
             }
         };
+
+        $scope.selectAllFn = function (selectAll) {
+            angular.forEach($scope.accounts, function (account) {
+                account.WasEncoded = selectAll;
+            });
+        };
+        $scope.isSelectedAll = function () {
+            for (var i = 0; i < $scope.accounts.length; i++) {
+                if (!$scope.accounts[i].Selected)
+                    return false;
+            }
+            return true;
+        };
+
 
         function IsNewEntry(){
             return $scope.entry == "new entry";
@@ -408,7 +423,9 @@ template += "                                <th>";
 template += "                                    Status";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    Was Encoded";
+template += "                                    <label>";
+template += "                                        <input type=\"checkbox\" ng-change=\"selectAllFn(selectAll)\" ng-checked=\"isSelectedAll()\" ng-model=\"selectAll\" \/> Was Encoded";
+template += "                                    <\/label>";
 template += "                                <\/th>";
 template += "                                <th>";
 template += "                                    Action";
@@ -436,7 +453,7 @@ template += "                                <th>";
 template += "                                    <input type=\"checkbox\" ng-model=\"account.WasEncoded\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    <button ng-click=\"EncodeOneItem({{account.Index}})\" ng-disabled=\"done\" ng-hide=\"true\">Encode<\/button>";
+template += "                                    <button ng-click=\"EncodeOneItem(account.Index)\" ng-disabled=\"done\" ng-hide=\"false\">Encode<\/button>";
 template += "                                <\/th>";
 template += "                            <\/tr>";
 template += "                            <\/tbody>";
