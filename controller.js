@@ -288,8 +288,8 @@ angular.module('hpi-encoder', [])
         function makeUpperCase() {
             $scope.uplineUserCode = $scope.uplineUserCode.toUpperCase().trim();
             $scope.firstName = $scope.firstName.toUpperCase().trim();
-            $scope.middleName = $scope.firstName.toUpperCase().trim();
-            $scope.lastName = $scope.firstName.toUpperCase().trim();
+            $scope.middleName = $scope.middleName.toUpperCase().trim();
+            $scope.lastName = $scope.lastName.toUpperCase().trim();
         }
 
         function log(msg) {
