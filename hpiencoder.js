@@ -75,8 +75,10 @@
     loadScripts([
         "https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js",
         "https://code.angularjs.org/1.2.0/angular-animate.min.js",
+        "https://code.angularjs.org/1.2.0/angular-sanitize.min.js",
         "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.2/ng-csv.min.js",
         appRoot + 'init.js',
         appRoot + 'controller.js'
     ], function() {

@@ -28,6 +28,7 @@ angular.module('hpi-encoder', [])
         $scope.entry = /signup-newentry.php/i.test(location.href) ? "new entry" : "re entry";
         $scope.entries = ["new entry","re entry"];
         $scope.selectAll = false;
+        $scope.isInputFieldsAreValid = inputFieldsAreValid();
 
         $scope.uplineUserCode = '';
         $scope.firstName = '';
@@ -118,6 +119,46 @@ angular.module('hpi-encoder', [])
             return true;
         };
 
+        $scope.getArrayForCsv = function () {
+            var list = [];
+
+            angular.forEach($scope.accounts, function (account) {
+                list.push({
+                    UserCode: account.UserCode,
+                    ReferredBy: account.ReferredBy,
+                    ActivationCode: account.ActivationCode
+                });
+            });
+
+            return list;
+        };
+
+        function inputFieldsAreValid (){
+            var isValid = true;
+
+            if(IsNewEntry() && getPlaceHolder("main_upline") != "Your Upline User Code")
+                isValid = false;
+            else  if(getPlaceHolder("iacno") != "User Code Here")
+                isValid = false;
+            else if(getPlaceHolder("pass") != "Password Here")
+                isValid = false;
+            else if(getPlaceHolder("vpass") != "Confirm Password")
+                isValid = false;
+            else if(getPlaceHolder("lname") != "Last Name Here")
+                isValid = false;
+            else if(getPlaceHolder("frname") != "First Name Here")
+                isValid = false;
+            else if(getPlaceHolder("mname") != "Middle Name Here")
+                isValid = false;
+            else if(!IsNewEntry() && getPlaceHolder("sponsor") != "Sponsor ID Here")
+                isValid = false;
+            else if(IsNewEntry() && getPlaceHolder("sponsor") != "Referred ID Here")
+                isValid = false;
+            else if(getPlaceHolder("actpin") != "Activation Code Here")
+                isValid = false;
+
+            return isValid;
+        }
 
         function IsNewEntry(){
             return $scope.entry == "new entry";
@@ -336,6 +377,14 @@ angular.module('hpi-encoder', [])
                 showCloseButton: true
             });
         }
+
+
+        function getPlaceHolder(id){
+            var element = document.getElementById(id);
+            if(element)
+                return element.getAttribute("placeholder");
+            return null;
+        }
     })
     .directive('hpiEncoder', function () {
         return {
@@ -349,6 +398,16 @@ template += "<toaster-container toaster-options=\"{'time-out': 3000}\"><\/toaste
 template += "<div align=\"center\" style=\"background-color: white\">";
 template += "    <div class=\"container\">";
 template += "        <div class=\"row clearfix\">";
+template += "            <div class=\"col-md-12 column\">";
+template += "                HPI Encoder ver 1.0";
+template += "            <\/div>";
+template += "        <\/div>";
+template += "        <div class=\"row clearfix\" ng-hide=\"isInputFieldsAreValid\">";
+template += "            <div class=\"col-md-12 column\">";
+template += "                WARNING : the input fields was change since the last update. Pls contact Mike to fix this. You know where you can find me.";
+template += "            <\/div>";
+template += "        <\/div>";
+template += "        <div class=\"row clearfix\" ng-show=\"isInputFieldsAreValid\">";
 template += "            <div class=\"col-md-12 column\">";
 template += "                <div class=\"panel panel-default\">";
 template += "                    <div class=\"panel-heading\">";
@@ -368,7 +427,7 @@ template += "                    <\/div>";
 template += "                <\/div>";
 template += "            <\/div>";
 template += "        <\/div>";
-template += "        <div class=\"row clearfix\">";
+template += "        <div class=\"row clearfix\" ng-show=\"isInputFieldsAreValid\">";
 template += "            <div class=\"col-md-12 column\">";
 template += "                <div class=\"panel panel-default\">";
 template += "                    <div class=\"panel-heading\">";
@@ -380,29 +439,37 @@ template += "                    <div class=\"panel-body\">";
 template += "                        <form role=\"form\">";
 template += "                            <div class=\"form-group\" ng-hide=\"true\">";
 template += "                                <label>New Entry Or Re-Entry<\/label>";
-template += "                                <select ng-model=\"entry\" class=\"form-control\" ng-options=\"entry for entry in entries\"><\/select>";
+template += "                                <select ng-model=\"entry\" class=\"form-control\"";
+template += "                                        ng-options=\"entry for entry in entries\"><\/select>";
 template += "                            <\/div>";
 template += "                            <div class=\"form-group\" ng-show=\"entry == 'new entry'\">";
 template += "                                <label for=\"uplineUserCode\">Your Upline User Code<\/label>";
-template += "                                <input type=\"text\" id=\"uplineUserCode\" class=\"form-control\" placeholder=\"Your Upline User Code\" ng-model=\"uplineUserCode\"\/>";
+template += "                                <input type=\"text\" id=\"uplineUserCode\" class=\"form-control\"";
+template += "                                       placeholder=\"Your Upline User Code\" ng-model=\"uplineUserCode\"\/>";
 template += "                            <\/div>";
 template += "                            <div class=\"form-group\">";
 template += "                                <label for=\"firstName\">First Name<\/label>";
-template += "                                <input type=\"text\" id=\"firstName\" class=\"form-control\" placeholder=\"First Name\" ng-model=\"firstName\"\/>";
+template += "                                <input type=\"text\" id=\"firstName\" class=\"form-control\" placeholder=\"First Name\"";
+template += "                                       ng-model=\"firstName\"\/>";
 template += "                            <\/div>";
 template += "                            <div class=\"form-group\">";
 template += "                                <label for=\"middleName\">Middle Name<\/label>";
-template += "                                <input type=\"text\" id=\"middleName\" class=\"form-control\" placeholder=\"Middle Name\" ng-model=\"middleName\"\/>";
+template += "                                <input type=\"text\" id=\"middleName\" class=\"form-control\" placeholder=\"Middle Name\"";
+template += "                                       ng-model=\"middleName\"\/>";
 template += "                            <\/div>";
 template += "                            <div class=\"form-group\">";
 template += "                                <label for=\"lastName\">Last Name<\/label>";
-template += "                                <input type=\"text\" id=\"lastName\" class=\"form-control\" placeholder=\"Last Name\" ng-model=\"lastName\"\/>";
+template += "                                <input type=\"text\" id=\"lastName\" class=\"form-control\" placeholder=\"Last Name\"";
+template += "                                       ng-model=\"lastName\"\/>";
 template += "                            <\/div>";
 template += "                            <div class=\"form-group\">";
 template += "                                <label for=\"userPassword\">User Password<\/label>";
-template += "                                <input type=\"text\" id=\"userPassword\" class=\"form-control\" placeholder=\"User Password\" ng-model=\"password\"\/>";
+template += "                                <input type=\"text\" id=\"userPassword\" class=\"form-control\" placeholder=\"User Password\"";
+template += "                                       ng-model=\"password\"\/>";
 template += "                            <\/div>";
-template += "                            <button type=\"submit\" class=\"btn btn-default\" ng-click=\"Encode()\" ng-disabled=\"done\">Encode All<\/button>";
+template += "                            <button type=\"submit\" class=\"btn btn-default\" ng-click=\"Encode()\" ng-disabled=\"done\">Encode";
+template += "                                All";
+template += "                            <\/button>";
 template += "                        <\/form>";
 template += "                        <table class=\"table\">";
 template += "                            <thead>";
@@ -424,7 +491,8 @@ template += "                                    Status";
 template += "                                <\/th>";
 template += "                                <th>";
 template += "                                    <label>";
-template += "                                        <input type=\"checkbox\" ng-change=\"selectAllFn(selectAll)\" ng-checked=\"isSelectedAll()\" ng-model=\"selectAll\" \/> Was Encoded";
+template += "                                        <input type=\"checkbox\" ng-change=\"selectAllFn(selectAll)\"";
+template += "                                               ng-checked=\"isSelectedAll()\" ng-model=\"selectAll\"\/> Was Encoded";
 template += "                                    <\/label>";
 template += "                                <\/th>";
 template += "                                <th>";
@@ -444,7 +512,8 @@ template += "                                <th>";
 template += "                                    <input type=\"input\" ng-model=\"account.ReferredBy\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    <input type=\"input\" ng-model=\"account.ActivationCode\" ng-change=\"ActivationCodeChange({{account.Index}})\"\/>";
+template += "                                    <input type=\"input\" ng-model=\"account.ActivationCode\"";
+template += "                                           ng-change=\"ActivationCodeChange({{account.Index}})\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
 template += "                                    {{account.Status}}";
@@ -453,16 +522,21 @@ template += "                                <th>";
 template += "                                    <input type=\"checkbox\" ng-model=\"account.WasEncoded\"\/>";
 template += "                                <\/th>";
 template += "                                <th>";
-template += "                                    <button ng-click=\"EncodeOneItem(account.Index)\" ng-disabled=\"done\" ng-hide=\"false\">Encode<\/button>";
+template += "                                    <button ng-click=\"EncodeOneItem(account.Index)\" ng-disabled=\"done\" ng-hide=\"false\">";
+template += "                                        Encode";
+template += "                                    <\/button>";
 template += "                                <\/th>";
 template += "                            <\/tr>";
 template += "                            <\/tbody>";
 template += "                        <\/table>";
+template += "";
+template += "                        <button type=\"button\" ng-csv=\"getArrayForCsv()\" filename=\"encoded.csv\" csv-header=\"['User Code', 'Referred By', 'Activation Code']\">Export<\/button>";
+template += "";
 template += "                    <\/div>";
 template += "                <\/div>";
 template += "            <\/div>";
 template += "        <\/div>";
-template += "        <div class=\"row clearfix\">";
+template += "        <div class=\"row clearfix\" ng-show=\"isInputFieldsAreValid\">";
 template += "            <div class=\"col-md-12 column\">";
 template += "                <div class=\"panel panel-default\">";
 template += "                    <div class=\"panel-heading\">";
@@ -478,3 +552,4 @@ template += "            <\/div>";
 template += "        <\/div>";
 template += "    <\/div>";
 template += "<\/div>";
+

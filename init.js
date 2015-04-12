@@ -12,7 +12,7 @@ var form = document.getElementsByTagName("form")[0];
 form.setAttribute('ng-hide', 'true');
 
 
-var app = angular.module('bookmarklet', ['toaster','hpi-encoder']);
+var app = angular.module('bookmarklet', ['toaster','ngSanitize', 'ngCsv','hpi-encoder']);
 
 app.run(function ($rootScope) {
     $rootScope.URL = location.href;
