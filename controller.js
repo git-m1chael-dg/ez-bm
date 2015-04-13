@@ -399,7 +399,7 @@ template += "<div align=\"center\" style=\"background-color: white\">";
 template += "    <div class=\"container\">";
 template += "        <div class=\"row clearfix\">";
 template += "            <div class=\"col-md-12 column\">";
-template += "                HPI Encoder ver 1.0";
+template += "                <b>HPI Encoder ver 1.0<\/b>";
 template += "            <\/div>";
 template += "        <\/div>";
 template += "        <div class=\"row clearfix\" ng-hide=\"isInputFieldsAreValid\">";
