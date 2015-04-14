@@ -80,6 +80,7 @@
         "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.2/ng-csv.min.js",
         appRoot + 'init.js',
+        appRoot + 'template.js',
         appRoot + 'controller.js'
     ], function() {
         // Manual Initialization of angular app
