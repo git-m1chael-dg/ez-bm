@@ -19,7 +19,7 @@ angular.module('hpi-encoder', [])
 
         var self = this;
         self.newentryPostUrl = "http://hpidirectsales.ph/signup-newentry.php?page_id=88";
-        self.reentryPostUrl = "http://hpidirectsales.ph/signup-reentry.php?page_id=88";
+        self.reentryPostUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/easyencoding-reentry.php";
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
 
@@ -87,24 +87,33 @@ angular.module('hpi-encoder', [])
                 makeUpperCase();
                 account.MakeUpperCase();
 
-                var postdata = getPostData(account);
+                var postData = getPostData(account);
 
-                checkUserName(account, function () {
-                    var url = IsNewEntry() ? self.newentryPostUrl : self.reentryPostUrl;
-                    $http.post(url, postdata).
-                        success(function (data) {
-                            $scope.isDone = true;
-                            if (isSuccess(account, data)){
-                                log("Success. User code : " + account.UserCode);
-                                popsuccess("Success. User code : " + account.UserCode);
-                            }
-                        }).
-                        error(function () {
-                            log("Failure. User code : " + account.UserCode);
-                            poperror("Failure. User code : " + account.UserCode);
-                            $scope.isDone = true;
-                        });
-                });
+
+                var url = IsNewEntry() ? self.newentryPostUrl : self.reentryPostUrl;
+
+                var fd = new FormData();
+                var key;
+                for (key in postData) {
+                    fd.append(key, postData[key]);
+                }
+
+                $http.post(url, fd, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                }).success(function (data) {
+                        $scope.isDone = true;
+                        if (isSuccess(account, data)){
+                            log("Success. User code : " + account.UserCode);
+                            popsuccess("Success. User code : " + account.UserCode);
+                        }
+                    }).
+                    error(function () {
+                        log("Failure. User code : " + account.UserCode);
+                        poperror("Failure. User code : " + account.UserCode);
+                        $scope.isDone = true;
+                    });
+
             }
         };
 
@@ -145,7 +154,10 @@ angular.module('hpi-encoder', [])
             return list;
         };
 
-        function inputFieldsAreValid (){
+        function inputFieldsAreValid () {
+            return IsNewEntry() ? inputFieldsAreValidForNewEntry() :  inputFieldsAreValidForReEntry();
+        }
+        function inputFieldsAreValidForNewEntry (){
             var isValid = true;
 
             if(IsNewEntry() && getPlaceHolder("main_upline") != "Your Upline User Code")
@@ -167,6 +179,18 @@ angular.module('hpi-encoder', [])
             else if(IsNewEntry() && getPlaceHolder("sponsor") != "Referred ID Here")
                 isValid = false;
             else if(getPlaceHolder("actpin") != "Activation Code Here")
+                isValid = false;
+
+            return isValid;
+        }
+        function inputFieldsAreValidForReEntry (){
+            var isValid = true;
+
+            if(!isValidControl("box1","usercode[]","User Code Here"))
+                isValid = false;
+            else if(!isValidControl("box2","referral[]","Referral Here"))
+                isValid = false;
+            else if(!isValidControl("box3","pin[]","PIN Here"))
                 isValid = false;
 
             return isValid;
@@ -193,38 +217,26 @@ angular.module('hpi-encoder', [])
                 };
             else
                 return {
-                    iacno: account.UserCode,
-                    pass: $scope.password,
-                    vpass: $scope.password,
-                    lname: $scope.lastName,
-                    frname: $scope.firstName,
-                    mname: $scope.middleName,
-                    sponsor: account.ReferredBy,
-                    actpin: account.ActivationCode,
-                    txtpostkey: 'Y',
-                    cmdSend: 'SAVE'
+                    "usercode[]": account.UserCode,
+                    "referral[]": $scope.ReferredBy,
+                    "pin[]": $scope.ActivationCode,
+                    submit: 'Submit'
                 };
         }
 
         function validateInput() {
-            var result = $scope.firstName && $scope.middleName && $scope.lastName &&
-                $scope.password;
+            var result = true;
 
-            if(IsNewEntry())
-                result = result && $scope.uplineUserCode;
-
-            if (!result){
-                if(IsNewEntry()){
+            if(IsNewEntry()) {
+                result = $scope.firstName && $scope.middleName && $scope.lastName &&
+                        $scope.password && $scope.uplineUserCode;
+                if(!result){
                     var msg ="Upline user code, username, last name, first name and middle name are required fields";
                     log(msg);
                     poperror(msg);
-                }else{
-                    var msg ="Username, last name, first name and middle name are required fields";
-                    log(msg);
-                    poperror(msg);
                 }
-
             }
+
             /*else
              {
              result = $scope.password < 6;
@@ -277,19 +289,25 @@ angular.module('hpi-encoder', [])
                     return;
                 }
 
-                var postdata = getPostData(account);
+                var postData = getPostData(account);
 
-                checkUserName(account, function () {
-                    doPost(account, postdata);
-                });
+                doPost(account, postData);
             }
         }
 
-        function doPost(account, postdata) {
+        function doPost(account, postData) {
             var url = IsNewEntry() ? self.newentryPostUrl : self.reentryPostUrl;
-            $http.post(url, postdata).
 
-                success(function (data) {
+            var fd = new FormData();
+            var key;
+            for (key in postData) {
+                fd.append(key, postData[key]);
+            }
+
+            $http.post(url, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).success(function (data) {
                     log("Success. User code : " + account.UserCode);
                     self.currentRequestIndex++;
                     if (isSuccess(account, data) && self.currentRequestIndex < $scope.accounts.length) {
@@ -397,6 +415,19 @@ angular.module('hpi-encoder', [])
             if(element)
                 return element.getAttribute("placeholder");
             return null;
+        }
+        function isValidControl(id,name,placeholder){
+            var valid = false;
+            var element = document.getElementById(id);
+
+            if(element) {
+                valid = true;
+                if( valid  && element.getAttribute("name") != name)
+                    valid = false;
+                if( valid  && element.getAttribute("placeholder") != placeholder)
+                    valid = false;
+            }
+            return valid;
         }
     })
     .directive('hpiEncoder', function () {

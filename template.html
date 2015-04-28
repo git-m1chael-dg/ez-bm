@@ -2,177 +2,173 @@
 http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-convertor/
 -->
 <toaster-container toaster-options="{'time-out': 3000}"></toaster-container>
-<div align="center" style="background-color: white">
-    <div class="container">
-        <div class="row clearfix">
-            <div class="col-md-12 column">
-                <b>HPI Encoder ver 1.0</b>
-            </div>
-        </div>
-        <div class="row clearfix" ng-hide="isInputFieldsAreValid">
-            <div class="col-md-12 column">
-                WARNING : the input fields was change since the last update. Pls contact Mike to fix this. You know
-                where you can find me.
-            </div>
-        </div>
-        <div class="row clearfix" ng-show="isInputFieldsAreValid">
-            <div class="col-md-12 column">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Step 1 : Input the CSV to parse
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <form role="form">
-                            <div class="form-group">
-                                <label for="csvText">Paste CSV content here</label>
-                                <textarea class="form-control" id="csvText" ng-model="csvContent"></textarea>
-                            </div>
-                            <button type="submit" class="btn btn-primary" ng-click="Parse()">Parse</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row clearfix" ng-show="isInputFieldsAreValid">
-            <div class="col-md-12 column">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Step 2 : Input user information
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <form role="form">
-                            <div class="form-group" ng-hide="true">
-                                <label>New Entry Or Re-Entry <b>*</b> </label>
-                                <select ng-model="entry" class="form-control"
-                                        ng-options="entry for entry in entries"></select>
-                            </div>
-                            <div class="form-group" ng-show="entry == 'new entry'">
-                                <label for="uplineUserCode">Your Upline User Code</label>
-                                <input type="text" id="uplineUserCode" class="form-control"
-                                       placeholder="Your Upline User Code" ng-model="uplineUserCode"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="firstName">First Name</label>
-                                <input type="text" id="firstName" class="form-control" placeholder="First Name"
-                                       ng-model="firstName"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="middleName">Middle Name</label>
-                                <input type="text" id="middleName" class="form-control" placeholder="Middle Name"
-                                       ng-model="middleName"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">Last Name</label>
-                                <input type="text" id="lastName" class="form-control" placeholder="Last Name"
-                                       ng-model="lastName"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="userPassword">User Password</label>
-                                <input type="text" id="userPassword" class="form-control" placeholder="User Password"
-                                       ng-model="password"/>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row clearfix" ng-show="isInputFieldsAreValid">
-            <div class="col-md-12 column">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Step 3 : Correct the fields below and click Encode.
-                        </h3>
-                    </div>
-                    <div>
-                        <button type="submit" class="btn btn-primary" ng-click="Encode()" ng-disabled="!isDone">Encode
-                            All
-                        </button>
-                        <button type="submit" class="btn btn-danger" ng-click="StopEncoding()">Stop
-                        </button>
-                    </div>
 
-                    <div class="panel-body">
-                        <table class="table">
-                            <thead>
-                            <tr>
-                                <th>
-                                    #
-                                </th>
-                                <th>
-                                    User Code
-                                </th>
-                                <th>
-                                    Referred By
-                                </th>
-                                <th>
-                                    Activation Code
-                                </th>
-                                <th>
-                                    Status
-                                </th>
-                                <th>
-                                        <input type="checkbox" ng-change="selectAllFn(selectAll)"
-                                               ng-checked="isSelectedAll()" ng-model="selectAll"/> Was Encoded
-                                </th>
-                                <th>
-                                    <input type="checkbox" ng-model="enableEncodeOneItem"
-                                                  alt="Enable Encode One By One. By default this is disable to prevent accident."/>
-                                    Action
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="account in accounts">
-                                <th>
-                                    {{account.Index}}
-                                </th>
-                                <th>
-                                    <input type="input" ng-model="account.UserCode"/>
-                                </th>
-                                <th>
-                                    <input type="input" ng-model="account.ReferredBy"/>
-                                </th>
-                                <th>
-                                    <input type="input" ng-model="account.ActivationCode"
-                                           ng-change="ActivationCodeChange({{account.Index}})"/>
-                                </th>
-                                <th>
-                                    {{account.Status}}
-                                </th>
-                                <th>
-                                    <input type="checkbox" ng-model="account.WasEncoded"/>
-                                </th>
-                                <th>
-                                    <button ng-click="EncodeOneItem(account.Index)" ng-disabled="!isDone || !enableEncodeOneItem">
-                                        Encode
-                                    </button>
-                                </th>
-                            </tr>
-                            </tbody>
-                        </table>
-                        <button type="button" ng-csv="getArrayForCsv()" filename="encoded.csv"
-                                csv-header="['User Code', 'Referred By', 'Activation Code']">Export
-                        </button>
-                    </div>
+<div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <b>HPI Encoder ver 1.0</b>
+        </div>
+    </div>
+    <div class="row clearfix" ng-hide="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            WARNING : the input fields was change since the last update. Pls contact Mike to fix this. You know
+            where you can find me.
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Step 1 : Input the CSV to parse
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form">
+                        <div class="form-group">
+                            <label for="csvText">Paste CSV content here</label>
+                            <textarea class="form-control" id="csvText" ng-model="csvContent"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" ng-click="Parse()">Parse</button>
+                    </form>
                 </div>
             </div>
         </div>
-        <div class="row clearfix" ng-show="isInputFieldsAreValid">
-            <div class="col-md-12 column">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">
-                            Logs
-                        </h3>
-                    </div>
-                    <div class="panel-body">
-                        <il ng-repeat="log in logs track by $index"><span>{{log}}</span></il>
-                    </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid && entry == 'new entry'">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Step 2 : Input user information
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form">
+                        <div class="form-group" ng-hide="true">
+                            <label>New Entry Or Re-Entry <b>*</b> </label>
+                            <select ng-model="entry" class="form-control"
+                                    ng-options="entry for entry in entries"></select>
+                        </div>
+                        <div class="form-group" ng-show="entry == 'new entry'">
+                            <label for="uplineUserCode">Your Upline User Code</label>
+                            <input type="text" id="uplineUserCode" class="form-control"
+                                   placeholder="Your Upline User Code" ng-model="uplineUserCode"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="firstName">First Name</label>
+                            <input type="text" id="firstName" class="form-control" placeholder="First Name"
+                                   ng-model="firstName"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="middleName">Middle Name</label>
+                            <input type="text" id="middleName" class="form-control" placeholder="Middle Name"
+                                   ng-model="middleName"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name</label>
+                            <input type="text" id="lastName" class="form-control" placeholder="Last Name"
+                                   ng-model="lastName"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="userPassword">User Password</label>
+                            <input type="text" id="userPassword" class="form-control" placeholder="User Password"
+                                   ng-model="password"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Step 3 : Correct the fields below and click Encode.
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                User Code
+                            </th>
+                            <th>
+                                Referred By
+                            </th>
+                            <th>
+                                Activation Code
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                    <input type="checkbox" ng-change="selectAllFn(selectAll)"
+                                           ng-checked="isSelectedAll()" ng-model="selectAll"/> Was Encoded
+                            </th>
+                            <th>
+                                <input type="checkbox" ng-model="enableEncodeOneItem"
+                                              alt="Enable Encode One By One. By default this is disable to prevent accident."/>
+                                Action
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="account in accounts">
+                            <th>
+                                {{account.Index}}
+                            </th>
+                            <th>
+                                <input type="input" ng-model="account.UserCode"/>
+                            </th>
+                            <th>
+                                <input type="input" ng-model="account.ReferredBy"/>
+                            </th>
+                            <th>
+                                <input type="input" ng-model="account.ActivationCode"
+                                       ng-change="ActivationCodeChange({{account.Index}})"/>
+                            </th>
+                            <th>
+                                {{account.Status}}
+                            </th>
+                            <th>
+                                <input type="checkbox" ng-model="account.WasEncoded"/>
+                            </th>
+                            <th>
+                                <button ng-click="EncodeOneItem(account.Index)" ng-disabled="!isDone || !enableEncodeOneItem">
+                                    Encode
+                                </button>
+                            </th>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <button type="submit" class="btn btn-primary" ng-click="Encode()" ng-disabled="!isDone">Encode
+                        All
+                    </button>
+                    <button type="submit" class="btn btn-danger" ng-click="StopEncoding()">Stop
+                    </button>
+                    <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="encoded.csv"
+                            csv-header="['User Code', 'Referred By', 'Activation Code']">Export
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Logs
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <il ng-repeat="log in logs track by $index"><span>{{log}}</span></il>
                 </div>
             </div>
         </div>
