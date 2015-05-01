@@ -80,13 +80,18 @@
         "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.2/ng-csv.min.js",
         appRoot + 'init.js',
-        appRoot + 'template.js',
-        appRoot + 'controller.js'
+        appRoot + 'Common/models.js',
+        appRoot + 'Common/CommonService.js',
+        appRoot + 'ReEntry/template.js',
+        appRoot + 'ReEntry/Directives.js',
+        appRoot + 'ReEntry/ReEntryCtrl.js'
     ], function() {
         // Manual Initialization of angular app
-        angular.element(document).ready(function() {
-            angular.bootstrap(document, ['bookmarklet']);
-        });
+        if (!angular.element(document).injector()) {
+            angular.element(document).ready(function () {
+                angular.bootstrap(document, ['bookmarklet']);
+            });
+        }
     });
 
 })();
