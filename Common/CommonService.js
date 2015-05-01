@@ -2,6 +2,10 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
         var commonFunc = function($http,toaster) {
             var self = this;
 
+            self.version =  function(){
+              return "1.1";
+            };
+
             self.validateActivationCode = function (account) {
 
                 account.ActivationCode = account.ActivationCode.trim();
@@ -107,6 +111,19 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                         return false;
                 }
                 return true;
+            };
+
+            self.determineDelimiter  = function (allTextLines) {
+                var countTab = 0;
+                var countComma = 0;
+                for (var i = 1; i < allTextLines.length && i < 5; i++) {
+                    if(allTextLines[i].indexOf(',') > -1)
+                        countComma++;
+                    if(allTextLines[i].indexOf('\t') > -1)
+                        countTab++;
+                }
+
+                return countComma > countTab ? ',' : '\t';
             };
         };
 

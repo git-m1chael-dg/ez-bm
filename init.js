@@ -6,7 +6,7 @@ $('div.col-lg-12 > div').hide();
 if(/oneclick.php/i.test(location.href))
     $('div.col-lg-12').prepend("<div ng-controller='AdvanceCodeCtrl'><hpi-encoder></hpi-encoder></div>");
 else if(/easyencoding.php/i.test(location.href))
-    $('div.col-lg-12').prepend("<div ng-controller='NewEntryCtrl'><hpi-encoder></hpi-encoder></div>");
+    $('div.col-lg-12').prepend("<div ng-controller='NewEntryCtrl'><new-Entry></new-Entry></div>");
 else if(/easyencoding-reentry.php/i.test(location.href))
     $('#page-wrapper > div.col-lg-12').prepend("<div ng-controller='ReEntryCtrl'><re-Entry></re-Entry></div>");
 else
@@ -21,3 +21,22 @@ app.run(function ($rootScope) {
 });
 
 var hpiModule = angular.module('hpi-encoder',[]);
+
+hpiModule.directive('capitalize', function() {
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, modelCtrl) {
+            var capitalize = function(inputValue) {
+                if(inputValue == undefined) inputValue = '';
+                var capitalized = inputValue.toUpperCase();
+                if(capitalized !== inputValue) {
+                    modelCtrl.$setViewValue(capitalized);
+                    modelCtrl.$render();
+                }
+                return capitalized;
+            };
+            modelCtrl.$parsers.push(capitalize);
+            capitalize(scope[attrs.ngModel]);  // capitalize initial value
+        }
+    };
+});

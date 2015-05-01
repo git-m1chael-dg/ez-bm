@@ -84,7 +84,10 @@
         appRoot + 'Common/CommonService.js',
         appRoot + 'ReEntry/template.js',
         appRoot + 'ReEntry/Directives.js',
-        appRoot + 'ReEntry/ReEntryCtrl.js'
+        appRoot + 'ReEntry/ReEntryCtrl.js',
+        appRoot + 'NewEntry/template.js',
+        appRoot + 'NewEntry/Directives.js',
+        appRoot + 'NewEntry/NewEntryCtrl.js'
     ], function() {
         // Manual Initialization of angular app
         if (!angular.element(document).injector()) {

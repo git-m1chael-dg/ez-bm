@@ -5,6 +5,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
 
+        $scope.version = CommonFunc.version();
         $scope.stopEncoding = true;
         $scope.isDone = true;
         $scope.enableEncodeOneItem = false;
@@ -21,23 +22,25 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
             var allTextLines = $scope.csvContent.split(/\r\n|\n/);
             $scope.accounts = [];
             var index = 1;
+            var delimiter = CommonFunc.determineDelimiter(allTextLines);
             for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].split(',');
-                if (data.length >= 3 && data[0] && data[1] && data[2])
+                var data = allTextLines[i].split(delimiter);
+                if (data.length >= 3 && data[0] && data[1] && data[2]) {
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
+                    index++;
+                }
                 else{
-                    var lineNo = index + 1;
+                    var lineNo = i + 1;
                     CommonFunc.PopWarning("Invalid data was found  at line " + lineNo);
                     log("Invalid data was found  at line " + lineNo);
                 }
-                index++;
             }
 
             CommonFunc.validateActivationCodes($scope.accounts);
 
-            $scope.parseMessage = "Parsed " + index + " record(s) and it has " + CommonFunc.countInvalidCodes($scope.accounts) + " error(s) or invalid code(s)";
-
+            $scope.parseMessage = "Parsed " + $scope.accounts.length + " record(s) and it has " + CommonFunc.countInvalidCodes($scope.accounts) + " error(s) or invalid code(s)";
         };
+
         $scope.StopEncoding = function () {
             $scope.stopEncoding = true;
             CommonFunc.PopWarning("Stopping the current encoding..pls wait");
@@ -105,14 +108,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
 
         };
 
-        $scope.ActivationCodeChange = function (index) {
-            index--;
-            if (index < $scope.accounts.length) {
-
-                var account = $scope.accounts[index];
-
-                CommonFunc.validateActivationCode(account);
-            }
+        $scope.ActivationCodeChange = function (account) {
+            CommonFunc.validateActivationCode(account);
         };
 
         $scope.selectAllFn = function (selectAll) {
@@ -167,6 +164,9 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
                 var postData = getPostData(account);
 
                 doPost(account, postData);
+            }else{
+                $scope.isDone = true;
+                $scope.stopEncoding = false;
             }
         }
 
@@ -236,6 +236,9 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
                 account.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
                 account.WasEncoded = false;
                 log("User hpidirec_admin already has more than 'max_user_connections' active connections");
+            }else{
+                account.Status = "cannot determine the response of the server.";
+                log("User code '" + account.UserCode + "' was send to server but the server did not respond properly or the status is different");
             }
 
             return account.WasEncoded;

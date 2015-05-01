@@ -6,12 +6,12 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
 <div>
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <b>HPI Encoder ver 1.0</b>
+            <b>HPI Encoder ver {{version}}</b>
         </div>
     </div>
     <div class="row clearfix" ng-hide="isInputFieldsAreValid">
         <div class="col-md-12 column">
-            WARNING : the input fields was change since the last update. Pls contact Mike to fix this. You know
+            WARNING : the input fields were change since the last update. Pls contact Mike to fix this. You know
             where you can find me.
         </div>
     </div>
@@ -101,7 +101,7 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                             </th>
                             <th>
                                 <input type="input" ng-model="account.ActivationCode"
-                                       ng-change="ActivationCodeChange({{account.Index}})"/>
+                                       ng-change="ActivationCodeChange(account)"/>
                             </th>
                             <th>
                                 {{account.Status}}

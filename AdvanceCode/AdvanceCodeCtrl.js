@@ -5,6 +5,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
 
+        $scope.version = CommonFunc.version();
         $scope.stopEncoding = true;
         $scope.isDone = true;
         $scope.enableEncodeOneItem = false;
