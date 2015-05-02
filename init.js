@@ -15,7 +15,7 @@ if(/oneclick.php/i.test(location.href)){
     $('div.col-lg-12 > div').hide();
     $('#page-wrapper > div.col-lg-12').prepend("<div ng-controller='ReEntryCtrl'><re-Entry></re-Entry></div>");
 }else
-    $('body').after('<h1 class=\"text-danger\">wrong page!</h1>h1>');
+    $('body').after('<div class=\"navbar-fixed-top\"><h1>WRONG PAGE!</h1></div>');
 
 
 
