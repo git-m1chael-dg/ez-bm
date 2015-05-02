@@ -265,7 +265,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         }
 
         function log(msg) {
-            $scope.logs.push(msg);
+            $scope.logs.push(CommonFunc.getCurrentTime() + " : " + msg);
             console.log(msg);
         }
     });

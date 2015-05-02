@@ -265,7 +265,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         }
 
         function log(msg) {
-            $scope.logs.push(msg);
+            $scope.logs.push(CommonFunc.getCurrentTime() + " : " + msg);
             console.log(msg);
         }
     });

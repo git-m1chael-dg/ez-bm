@@ -130,7 +130,14 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 var element = document.getElementById(id);
                 return element && element.getAttribute("name") == name &&
                     element.getAttribute("placeholder") == placeholder;
-            }
+            };
+
+            self.getCurrentTime = function () {
+                var currentTime = new Date();
+                var time = currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds();
+                return time;
+            };
+
         };
 
         return new commonFunc($http,toaster);

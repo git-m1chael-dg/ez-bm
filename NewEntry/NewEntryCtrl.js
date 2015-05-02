@@ -349,7 +349,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
         }
 
         function log(msg) {
-            $scope.logs.push(msg);
+            $scope.logs.push(CommonFunc.getCurrentTime() + " : " + msg);
             console.log(msg);
         }
 
