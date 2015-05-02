@@ -158,6 +158,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         function next() {
             if(!$scope.stopEncoding)
                 $timeout(makeNextRequest, 500);
+            else
+                $scope.isDone = true;
         }
 
         function makeNextRequest() {
