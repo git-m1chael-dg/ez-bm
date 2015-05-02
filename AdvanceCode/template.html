@@ -6,12 +6,12 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
 <div>
     <div class="row clearfix">
         <div class="col-md-12 column">
-            <b>HPI Encoder ver {{version}}}</b>
+            <b>HPI Encoder ver {{version}}</b>
         </div>
     </div>
     <div class="row clearfix" ng-hide="isInputFieldsAreValid">
         <div class="col-md-12 column">
-            WARNING : the input fields was change since the last update. Pls contact Mike to fix this. You know
+            WARNING : the input fields were change since the last update. Pls contact Mike to fix this. You know
             where you can find me.
         </div>
     </div>
@@ -29,48 +29,11 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                             <label for="csvText">Paste CSV content here</label>
                             <textarea class="form-control" id="csvText" ng-model="csvContent"></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary" ng-click="Parse()">Parse</button>
-                        <span ng-show="parseMessage!=''">{{parseMessage}}</span>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row clearfix" ng-show="isInputFieldsAreValid && isNewEntry">
-        <div class="col-md-12 column">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Step 2 : Input user information
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    <form role="form">
-                        <div class="form-group" ng-show="isNewEntry">
-                            <label for="uplineUserCode">Your Upline User Code</label>
-                            <input type="text" id="uplineUserCode" class="form-control"
-                                   placeholder="Your Upline User Code" ng-model="uplineUserCode"/>
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="submit" class="btn btn-primary" ng-click="Parse()">Parse</button>
+                            <button type="submit" class="btn btn-default" ng-click="csvContent=''">Clear</button>
                         </div>
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" class="form-control" placeholder="First Name"
-                                   ng-model="firstName"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="middleName">Middle Name</label>
-                            <input type="text" id="middleName" class="form-control" placeholder="Middle Name"
-                                   ng-model="middleName"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" class="form-control" placeholder="Last Name"
-                                   ng-model="lastName"/>
-                        </div>
-                        <div class="form-group">
-                            <label for="userPassword">User Password</label>
-                            <input type="text" id="userPassword" class="form-control" placeholder="User Password"
-                                   ng-model="password"/>
-                        </div>
+                        <span ng-show="parseMessage!=''" class="text-danger">{{parseMessage}}</span>
                     </form>
                 </div>
             </div>
@@ -81,10 +44,21 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        Step 3 : Correct the fields below and click Encode.
+                        Step 2 : Correct the fields below and click Encode.
                     </h3>
                 </div>
                 <div class="panel-body">
+                    <p class="text-warning">To enable encode one item, you must first check action checkbox. This is to avoid accidental click</p>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="submit" class="btn btn-primary" ng-click="Encode()" ng-disabled="!isDone">Encode
+                            All
+                        </button>
+                        <button type="submit" class="btn btn-danger" ng-click="StopEncoding()">Stop
+                        </button>
+                        <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="encoded.csv"
+                                csv-header="['User Code', 'Referred By', 'Activation Code']">Export
+                        </button>
+                    </div>
                     <table class="table">
                         <thead>
                         <tr>
@@ -104,18 +78,18 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 Status
                             </th>
                             <th>
-                                    <input type="checkbox" ng-change="selectAllFn(selectAll)"
-                                           ng-checked="isSelectedAll()" ng-model="selectAll"/> Was Encoded
+                                <input type="checkbox" ng-change="selectAllFn(selectAll)"
+                                       ng-checked="isSelectedAll()" ng-model="selectAll"/> Was Encoded
                             </th>
                             <th>
                                 <input type="checkbox" ng-model="enableEncodeOneItem"
-                                              alt="Enable Encode One By One. By default this is disable to prevent accident."/>
+                                       alt="Enable Encode One By One. By default this is disable to prevent accident."/>
                                 Action
                             </th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="account in accounts">
+                        <tr ng-repeat="account in accounts" ng-class="{danger: account.IsError, success: account.IsSuccess}">
                             <th>
                                 {{account.Index}}
                             </th>
@@ -127,7 +101,7 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                             </th>
                             <th>
                                 <input type="input" ng-model="account.ActivationCode"
-                                       ng-change="ActivationCodeChange({{account.Index}})"/>
+                                       ng-change="ActivationCodeChange(account)"/>
                             </th>
                             <th>
                                 {{account.Status}}
@@ -136,7 +110,7 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 <input type="checkbox" ng-model="account.WasEncoded"/>
                             </th>
                             <th>
-                                <button ng-click="EncodeOneItem(account.Index)" ng-disabled="!isDone || !enableEncodeOneItem">
+                                <button ng-click="EncodeOneItem(account)" ng-disabled="!isDone || !enableEncodeOneItem">
                                     Encode
                                 </button>
                             </th>
@@ -167,7 +141,13 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <il ng-repeat="log in logs track by $index"><span>{{log}}</span></il>
+                    <table>
+                        <tr ng-repeat="log in logs.slice().reverse() track by $index">
+                            <th>
+                                {{log}}
+                            </th>
+                        </tr>
+                    </table>
                 </div>
             </div>
         </div>

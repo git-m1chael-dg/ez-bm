@@ -7,6 +7,9 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
     self.Status = status;
     self.WasEncoded = wasEncoded;
 
+    self.IsError = false;
+    self.IsSuccess = false;
+
     self.MakeUpperCase = function () {
         self.UserCode = self.UserCode.toUpperCase();
         self.ReferredBy = self.ReferredBy.toUpperCase();

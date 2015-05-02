@@ -23,7 +23,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
             $scope.accounts = [];
             var index = 1;
             var delimiter = CommonFunc.determineDelimiter(allTextLines);
-            for (var i = 1; i < allTextLines.length; i++) {
+            for (var i = 0; i < allTextLines.length; i++) {
                 var data = allTextLines[i].split(delimiter);
                 if (data.length >= 3 && data[0] && data[1] && data[2]) {
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
@@ -87,6 +87,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
                     if (success) {
                         log("Successfully encoded. User code : " + account.UserCode);
                         CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
+                    }else{
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
                     }
                 }
             }).error(function (data, status) {
@@ -128,12 +130,18 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         function inputFieldsAreValid () {
             var isValid = true;
 
-            if(!isValidControl("box1","usercode[]","User Code Here"))
+            if (!CommonFunc.isValidControlById("box1", "usercode[]", "User Code Here")) {
+                log("usercode[] changed");
                 isValid = false;
-            else if(!isValidControl("box2","referral[]","Referral Here"))
+            }
+            else if (!CommonFunc.isValidControlById("box2", "referral[]", "Referral Here")) {
+                log("referral[] changed");
                 isValid = false;
-            else if(!isValidControl("box3","pin[]","PIN Here"))
+            }
+            else if (!CommonFunc.isValidControlById("box3", "pin[]", "PIN Here")) {
+                log("pin[] changed");
                 isValid = false;
+            }
 
             return isValid;
         }
@@ -196,6 +204,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
                     if (success) {
                         log("Successfully encoded. User code : " + account.UserCode);
                         self.currentRequestIndex++;
+                    }else{
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
                     }
                     if (success && self.currentRequestIndex < $scope.accounts.length) {
                         next();
@@ -222,7 +232,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
 
         function isSuccess(account, response) {
             var m;
-
+            account.IsError = true;
+            account.IsSuccess = false;
             if ((m = /([a-zA-Z0-9, -]*please try again]*)/i.exec(response)) !== null) {
                 var message = m[1];
 
@@ -232,13 +243,20 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
                 var message = m[1];
                 account.Status = message;
                 account.WasEncoded = true;
+                account.IsError = false;
+                account.IsSuccess = true;
             }else if (response.indexOf("max_user_connections") > -1) {
                 account.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
                 account.WasEncoded = false;
                 log("User hpidirec_admin already has more than 'max_user_connections' active connections");
+            }else if(/Please login first/i.exec(response)){
+                account.Status = "Your session has been expired. Please re-login again and comeback to this page. Meaning nalogout ka sa na sa system";
+                log("Please login first");
+                CommonFunc.PopError("Please login first");
             }else{
                 account.Status = "cannot determine the response of the server.";
                 log("User code '" + account.UserCode + "' was send to server but the server did not respond properly or the status is different");
+                log(response);
             }
 
             return account.WasEncoded;
@@ -247,19 +265,5 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         function log(msg) {
             $scope.logs.push(msg);
             console.log(msg);
-        }
-
-        function isValidControl(id,name,placeholder){
-            var valid = false;
-            var element = document.getElementById(id);
-
-            if(element) {
-                valid = true;
-                if( valid  && element.getAttribute("name") != name)
-                    valid = false;
-                if( valid  && element.getAttribute("placeholder") != placeholder)
-                    valid = false;
-            }
-            return valid;
         }
     });

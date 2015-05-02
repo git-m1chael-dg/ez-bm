@@ -1,16 +1,19 @@
 /*hide the existing form*/
-$('div.col-lg-12 > div').hide();
+
 
 //$('#page-wrapper > div.col-lg-12').after("<div ng-controller='hpiEncoderController'><hpi-encoder></hpi-encoder></div>");
 
-if(/oneclick.php/i.test(location.href))
-    $('div.col-lg-12').prepend("<div ng-controller='AdvanceCodeCtrl'><hpi-encoder></hpi-encoder></div>");
-else if(/easyencoding.php/i.test(location.href))
+if(/oneclick.php/i.test(location.href)){
+    $('#page-wrapper').hide();
+    $('#wrapper').append("<div ng-controller='AdvanceCodeCtrl'><advance-Code></advance-Code></div>");
+}else if(/easyencoding.php/i.test(location.href)) {
+    $('div.col-lg-12 > div').hide();
     $('div.col-lg-12').prepend("<div ng-controller='NewEntryCtrl'><new-Entry></new-Entry></div>");
-else if(/easyencoding-reentry.php/i.test(location.href))
+}else if(/easyencoding-reentry.php/i.test(location.href)) {
+    $('div.col-lg-12 > div').hide();
     $('#page-wrapper > div.col-lg-12').prepend("<div ng-controller='ReEntryCtrl'><re-Entry></re-Entry></div>");
-else
-    $('body').after('wrong page!');
+}else
+    $('body').after('<h1 class=\"text-danger\">wrong page!</h1>h1>');
 
 
 

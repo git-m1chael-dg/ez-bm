@@ -60,7 +60,7 @@
         }
     };
 
-    var prod = true;
+    var prod = false;
     var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:800/ez-bm/';
 
 

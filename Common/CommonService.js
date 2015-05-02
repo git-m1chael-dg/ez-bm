@@ -3,7 +3,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
             var self = this;
 
             self.version =  function(){
-              return "1.1";
+              return "1.2";
             };
 
             self.validateActivationCode = function (account) {
@@ -116,7 +116,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
             self.determineDelimiter  = function (allTextLines) {
                 var countTab = 0;
                 var countComma = 0;
-                for (var i = 1; i < allTextLines.length && i < 5; i++) {
+                for (var i = 0; i < allTextLines.length && i < 5; i++) {
                     if(allTextLines[i].indexOf(',') > -1)
                         countComma++;
                     if(allTextLines[i].indexOf('\t') > -1)
@@ -125,6 +125,12 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
 
                 return countComma > countTab ? ',' : '\t';
             };
+
+            self.isValidControlById = function (id,name,placeholder) {
+                var element = document.getElementById(id);
+                return element && element.getAttribute("name") == name &&
+                    element.getAttribute("placeholder") == placeholder;
+            }
         };
 
         return new commonFunc($http,toaster);

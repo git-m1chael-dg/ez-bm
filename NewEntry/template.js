@@ -138,7 +138,7 @@ newEntryTemplate += "                            <\/th>";
 newEntryTemplate += "                        <\/tr>";
 newEntryTemplate += "                        <\/thead>";
 newEntryTemplate += "                        <tbody>";
-newEntryTemplate += "                        <tr ng-repeat=\"account in accounts\">";
+newEntryTemplate += "                        <tr ng-repeat=\"account in accounts\" ng-class=\"{danger: account.IsError, success: account.IsSuccess}\">";
 newEntryTemplate += "                            <th>";
 newEntryTemplate += "                                {{account.Index}}";
 newEntryTemplate += "                            <\/th>";

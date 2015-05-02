@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -13,43 +13,96 @@
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
- 
+</head>
+
 <body>
 
 <div class="container">
-
-  <div class="starter-template">
-	<h2>
-	Secret natin to!
-	</h2>
-
-<h1>
-Bookmarklet(compatible on chrome and firefox only)
-</h1>
-<p>Drag the below link to your bookmark or toolbar</p>
-<a class="btn btn-primary" href='javascript:(function(){var a=document.createElement("script");a.type="text/javascript";a.src="http://ez-bm.apphb.com/hpiencoder.js?"+Math.random();document.getElementsByTagName("head")[0].appendChild(a)})();'>Hpi
-    Encoder</a>
-<br/>
-<br/>
-<p>How to use?</p>
-
-<p>1. Bookmark the link above. This is called javascript bookmarklet. If you dont know search for it in google.</p>
-
-<p>2. Go to <a href="http://hpidirectsales.ph/easyencoding.php" target="_new">HPI New-entry</a> or <a href="http://hpidirectsales.ph/hpi_dashboard/pages/easyencoding-reentry.php" target="_new">HPI Re-entry</a> sign-up page.</p>
-
-<p>3. Click the Hpi Encoder bookmarklet.</p>
-
-<p>4. Relax and enjoy. see the magic begins.</p>
-  </div>
-
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="jumbotron">
+                <h1>
+                    HPI Tools
+                </h1>
+                <p>
+                    Drag the below link to your bookmark or toolbar(compatible on chrome and firefox only)
+                </p>
+                <p>
+                    <a class="btn btn-primary"
+                       href='javascript:(function(){var a=document.createElement("script");a.type="text/javascript";a.src="http://ez-bm.apphb.com/hpiencoder.js?"+Math.random();document.getElementsByTagName("head")[0].appendChild(a)})();'>Hpi
+                        Encoder</a>
+                </p>
+            </div>
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <h3>
+                        How to use?
+                    </h3>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            1.
+                        </dt>
+                        <dd>
+                            Bookmark the link above. This is called javascript bookmarklet. If you dont know search for it in google.
+                        </dd>
+                        <dt>
+                            2.
+                        </dt>
+                        <dd>
+                            Go to <a href="http://hpidirectsales.ph/easyencoding.php" target="_new">HPI New-entry</a> or <a href="http://hpidirectsales.ph/hpi_dashboard/pages/easyencoding-reentry.php" target="_new">HPI Re-entry</a> sign-up page.
+                        </dd>
+                        <dt>
+                            3.
+                        </dt>
+                        <dd>
+                            Click the Hpi Encoder bookmarklet.
+                        </dd>
+                        <dt>
+                            4.
+                        </dt>
+                        <dd>
+                            Relax and enjoy. see the magic begins.
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-12 column">
+                    <h3>
+                        Change log :
+                    </h3>
+                    <dl class="dl-horizontal">
+                        <dt>
+                            1.0
+                        </dt>
+                        <dd>
+                            Ported the app to javascript.
+                        </dd>
+                        <dd>
+                            Added support for re-entry(easy encoding)
+                        </dd>
+                        <dd>
+                            Only support the comma delimiter as input for parsing
+                        </dd>
+                        <dt>
+                            1.1
+                        </dt>
+                        <dd>
+                            Tab delimiter now supported as input for parsing. You can copy the content of excel and put it directly to the text box for parsing.
+                        </dd>
+                        <dd>
+                            Add support for new entry
+                        </dd>
+                        <dd>
+                            Fix bug numbering of the account. It display the wrong number if one or more wrong data was found between a valid data.
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-	
-
-<br/>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>

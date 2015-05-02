@@ -29,7 +29,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             $scope.accounts = [];
             var index = 1;
             var delimiter = CommonFunc.determineDelimiter(allTextLines);
-            for (var i = 1; i < allTextLines.length; i++) {
+            for (var i = 0; i < allTextLines.length; i++) {
                 var data = allTextLines[i].split(delimiter);
                 if (data.length >= 3 && data[0] && data[1] && data[2]) {
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
@@ -99,6 +99,8 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                         if (success) {
                             log("Successfully encoded. User code : " + account.UserCode);
                             CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
+                        }else{
+                            CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
                         }
                     }
                 }).error(function (data, status) {
@@ -279,6 +281,8 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                     if (success) {
                         log("Successfully encoded. User code : " + account.UserCode);
                         self.currentRequestIndex++;
+                    }else{
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
                     }
                     if (success && self.currentRequestIndex < $scope.accounts.length) {
                         next();
@@ -305,23 +309,31 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
 
         function isSuccess(account, response) {
             var m;
-
+            account.IsError = true;
+            account.IsSuccess = false;
             if ((m = /([a-zA-Z0-9, -]*please try again]*)/i.exec(response)) !== null) {
                 var message = m[1];
 
                 account.WasEncoded = false;
                 account.Status = message;
-            } else if ((m = /([a-zA-Z0-9, -]*successfully[a-zA-Z ]*)/i.exec(response)) !== null) {
+            }else if ((m = /([a-zA-Z0-9, -]*successfully[a-zA-Z ]*)/i.exec(response)) !== null) {
                 var message = m[1];
                 account.Status = message;
                 account.WasEncoded = true;
-            } else if (response.indexOf("max_user_connections") > -1) {
+                account.IsError = false;
+                account.IsSuccess = true;
+            }else if (response.indexOf("max_user_connections") > -1) {
                 account.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
                 account.WasEncoded = false;
                 log("User hpidirec_admin already has more than 'max_user_connections' active connections");
+            }else if(/Please login first/i.exec(response)){
+                account.Status = "Your session has been expired. Please re-login again and comeback to this page. Meaning nalogout ka sa na sa system";
+                log("Please login first");
+                CommonFunc.PopError("Please login first");
             }else{
                 account.Status = "cannot determine the response of the server.";
                 log("User code '" + account.UserCode + "' was send to server but the server did not respond properly or the status is different");
+                log(response);
             }
 
             return account.WasEncoded;

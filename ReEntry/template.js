@@ -87,7 +87,7 @@ reEntryTemplate += "                            <\/th>";
 reEntryTemplate += "                        <\/tr>";
 reEntryTemplate += "                        <\/thead>";
 reEntryTemplate += "                        <tbody>";
-reEntryTemplate += "                        <tr ng-repeat=\"account in accounts\">";
+reEntryTemplate += "                        <tr ng-repeat=\"account in accounts\" ng-class=\"{danger: account.IsError, success: account.IsSuccess}\">";
 reEntryTemplate += "                            <th>";
 reEntryTemplate += "                                {{account.Index}}";
 reEntryTemplate += "                            <\/th>";

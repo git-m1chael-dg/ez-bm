@@ -1,4 +1,4 @@
-hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaster) {
+hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaster,CommonFunc) {
 
         var self = this;
         self.PostUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/oneclick.php";
@@ -13,94 +13,105 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         $scope.selectAll = false;
         $scope.isInputFieldsAreValid =  inputFieldsAreValid();
 
-        $scope.uplineUserCode = '';
-        $scope.firstName = '';
-        $scope.middleName = '';
-        $scope.lastName = '';
-        $scope.password = '';
-
         $scope.csvContent = '';
         $scope.accounts = [];
 
+        $scope.parseMessage = '';
         $scope.logs = [];
         $scope.Parse = function () {
             var allTextLines = $scope.csvContent.split(/\r\n|\n/);
             $scope.accounts = [];
             var index = 1;
-            for (var i = 1; i < allTextLines.length; i++) {
-                var data = allTextLines[i].split(',');
-                if (data.length >= 3 && data[0] && data[1] && data[2])
+            var delimiter = CommonFunc.determineDelimiter(allTextLines);
+            for (var i = 0; i < allTextLines.length; i++) {
+                var data = allTextLines[i].split(delimiter);
+                if (data.length >= 3 && data[0] && data[1] && data[2]) {
                     $scope.accounts.push(new Account(index, data[0], data[1], data[2], '', false));
-                else{
-                    popwarning("Invalid data was found  at line " + index);
-                    log("Invalid data was found  at line " + index);
+                    index++;
                 }
-                index++;
+                else{
+                    var lineNo = i + 1;
+                    CommonFunc.PopWarning("Invalid data was found  at line " + lineNo);
+                    log("Invalid data was found  at line " + lineNo);
+                }
             }
 
-            validateActivationCodes();
+            CommonFunc.validateActivationCodes($scope.accounts);
+
+            $scope.parseMessage = "Parsed " + $scope.accounts.length + " record(s) and it has " + CommonFunc.countInvalidCodes($scope.accounts) + " error(s) or invalid code(s)";
         };
+
         $scope.StopEncoding = function () {
             $scope.stopEncoding = true;
-            popwarning("Stopping the current encoding..pls wait");
+            CommonFunc.PopWarning("Stopping the current encoding..pls wait");
         };
 
         $scope.Encode = function () {
-
-            if (validateInput()) {
-                $scope.stopEncoding = false;
-                $scope.isDone = false;
-                self.currentRequestIndex = 0;
-                next();
-            }
+            $scope.stopEncoding = false;
+            $scope.isDone = false;
+            self.currentRequestIndex = 0;
+            next();
         };
 
-        $scope.EncodeOneItem = function (index) {
-            index--;
-            if (validateInput() && index < $scope.accounts.length) {
+        $scope.EncodeOneItem = function (account) {
 
-                $scope.isDone = false;
-                $scope.stopEncoding = false;
+            $scope.isDone = false;
+            $scope.stopEncoding = false;
 
-                var account = $scope.accounts[index];
-                account.MakeUpperCase();
+            account.MakeUpperCase();
 
-                var postData = getPostData(account);
+            var postData = getPostData(account);
 
 
-                var fd = new FormData();
-                var key;
-                for (key in postData) {
-                    fd.append(key, postData[key]);
+            var fd = new FormData();
+            var key;
+            for (key in postData) {
+                fd.append(key, postData[key]);
+            }
+
+            $http.post(self.PostUrl, fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).success(function (data, status) {
+                $scope.isDone = true;
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    var success = isSuccess(account, data);
+                    if (success) {
+                        log("Successfully encoded. User code : " + account.UserCode);
+                        CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
+                    }else{
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    }
                 }
+            }).error(function (data, status) {
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    log(data);
+                }
+                log("Failure. User code : " + account.UserCode);
+                $scope.isDone = true;
+                CommonFunc.PopError("Failure. User code : " + account.UserCode);
+            });
 
-                $http.post(self.PostUrl, fd, {
-                    transformRequest: angular.identity,
-                    headers: {'Content-Type': undefined}
-                }).success(function (data) {
-                        $scope.isDone = true;
-                        if (isSuccess(account, data)){
-                            log("Success. User code : " + account.UserCode);
-                            popsuccess("Success. User code : " + account.UserCode);
-                        }
-                    }).
-                    error(function () {
-                        log("Failure. User code : " + account.UserCode);
-                        poperror("Failure. User code : " + account.UserCode);
-                        $scope.isDone = true;
-                    });
-
-            }
         };
 
-        $scope.ActivationCodeChange = function (index) {
-            index--;
-            if (index < $scope.accounts.length) {
-
-                var account = $scope.accounts[index];
-
-                validateActivationCode(account);
-            }
+        $scope.ActivationCodeChange = function (account) {
+            CommonFunc.validateActivationCode(account);
         };
 
         $scope.selectAllFn = function (selectAll) {
@@ -109,36 +120,28 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
             });
         };
         $scope.isSelectedAll = function () {
-            for (var i = 0; i < $scope.accounts.length; i++) {
-                if (!$scope.accounts[i].Selected)
-                    return false;
-            }
-            return true;
+            return CommonFunc.isSelectedAll($scope.accounts);
         };
 
         $scope.getArrayForCsv = function () {
-            var list = [];
-
-            angular.forEach($scope.accounts, function (account) {
-                list.push({
-                    UserCode: account.UserCode,
-                    ReferredBy: account.ReferredBy,
-                    ActivationCode: account.ActivationCode
-                });
-            });
-
-            return list;
+            return CommonFunc.getArrayForCsv($scope.accounts);
         };
 
         function inputFieldsAreValid () {
             var isValid = true;
 
-            if(!isValidControl("box1","usercode[]","User Code Here"))
+            if(!CommonFunc.isValidControlById("box1","usercode[]","User Code Here")){
+                log("usercode[] changed");
                 isValid = false;
-            else if(!isValidControl("box2","referral[]","Referral Here"))
+            }
+            else if(!CommonFunc.isValidControlById("box2","referral[]","Referral Here")){
+                log("referral[] changed");
                 isValid = false;
-            else if(!isValidControl("box3","pin[]","PIN Here"))
+            }
+            else if(!CommonFunc.isValidControlById("box3","pin[]","PIN Here")){
+                log("pin[] changed");
                 isValid = false;
+            }
 
             return isValid;
         }
@@ -146,48 +149,15 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         function getPostData(account) {
             return {
                 "usercode[]": account.UserCode,
-                "referral[]": $scope.ReferredBy,
-                "pin[]": $scope.ActivationCode,
+                "referral[]": account.ReferredBy,
+                "pin[]": account.ActivationCode,
                 submit: 'Submit'
             };
-        }
-
-        function validateInput() {
-            var result = true;
-
-            return result;
         }
 
         function next() {
             if(!$scope.stopEncoding)
                 $timeout(makeNextRequest, 500);
-        }
-
-        function checkUserName(account, fn) {
-            $http.post(self.userCodeCheckerUrl,
-                {action: 'username_availability', iacno: account.UserCode}).
-                success(function (data) {
-                    if (data == 0) {
-                        log("Username name available: " + account.UserCode);
-
-                        fn();
-                    }
-                    else if (data > 0) {
-                        log("Username already taken: " + account.UserCode);
-                        account.Status = "Username already taken";
-                        $scope.isDone = true;
-                    }
-                    else {
-                        log('Problem with sql query');
-                        account.Status = "Problem with sql query";
-                        $scope.isDone = true;
-                    }
-
-                }).
-                error(function () {
-                    log("Failure. Checking user code availability : " + userCode);
-                    $scope.isDone = true;
-                });
         }
 
         function makeNextRequest() {
@@ -202,6 +172,9 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                 var postData = getPostData(account);
 
                 doPost(account, postData);
+            }else{
+                $scope.isDone = true;
+                $scope.stopEncoding = false;
             }
         }
 
@@ -216,75 +189,74 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
             $http.post(self.PostUrl, fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
-            }).success(function (data) {
-                    log("Success. User code : " + account.UserCode);
-                    self.currentRequestIndex++;
-                    if (isSuccess(account, data) && self.currentRequestIndex < $scope.accounts.length) {
+            }).success(function (data, status) {
+
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    var success = isSuccess(account, data);
+                    if (success) {
+                        log("Successfully encoded. User code : " + account.UserCode);
+                        self.currentRequestIndex++;
+                    }else{
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    }
+                    if (success && self.currentRequestIndex < $scope.accounts.length) {
                         next();
                     } else
                         $scope.isDone = true;
-                }).
-                error(function () {
-                    log("Failure. User code : " + account.UserCode);
-                    $scope.isDone = true;
-                });
-        }
-
-        function validateActivationCode(account) {
-
-            account.ActivationCode = account.ActivationCode.trim();
-            if (/[A-Z0-9]{11}0/i.test(account.ActivationCode))
-            {
-                //try to correct it
-                account.ActivationCode = setCharAt(account.ActivationCode, 11, "O");
-            }
-            if (/[A-Z]{2}0[A-Z0-9]{9}/i.test(account.ActivationCode))
-            {
-                //try to correct it
-                account.ActivationCode = setCharAt(account.ActivationCode, 2, "O");
-            }
-            if (/[A-Z]{2}0\d{6}[A-Z]{2}0/i.test(account.ActivationCode)) {
-                //try to correct it
-                account.ActivationCode = setCharAt(account.ActivationCode, 2, 'O');
-
-                account.ActivationCode = setCharAt(account.ActivationCode, 11, 'O');
-            }
-            //valid code
-            if (/[A-Z]{3}\d{6}[A-Z]{3}/i.test(account.ActivationCode)) {
-                if (account.Status == "Invalid activation code")
-                    account.Status = "";
-                return true;
-            }
-
-            account.Status = "Invalid activation code";
-            return false;
-        }
-
-        function validateActivationCodes() {
-            var isValid = true;
-
-            angular.forEach($scope.accounts, function (account) {
-                if (!validateActivationCode(account))
-                    isValid = false;
+                }
+            }).error(function (data, status) {
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    log(data);
+                }
+                log("Failure. User code : " + account.UserCode);
+                $scope.isDone = true;
+                CommonFunc.PopError("Failure. User code : " + account.UserCode);
             });
-
-            return isValid;
         }
-
-        function setCharAt(str, index, chr) {
-            if (index > str.length - 1) return str;
-            return str.substr(0, index) + chr + str.substr(index + 1);
-        }
-
-        var pattern = /<span class="style20">([A-Za-z\. ]+)<\/span>/;
 
         function isSuccess(account, response) {
             var m;
-            if ((m = pattern.exec(response)) !== null) {
+            account.IsError = true;
+            account.IsSuccess = false;
+            if ((m = /([a-zA-Z0-9, -]*please try again]*)/i.exec(response)) !== null) {
                 var message = m[1];
 
-                account.WasEncoded = /successful/i.test(message);
+                account.WasEncoded = false;
                 account.Status = message;
+            }else if ((m = /([a-zA-Z0-9, -]*successfully[a-zA-Z ]*)/i.exec(response)) !== null) {
+                var message = m[1];
+                account.Status = message;
+                account.WasEncoded = true;
+                account.IsError = false;
+                account.IsSuccess = true;
+            }else if (response.indexOf("max_user_connections") > -1) {
+                account.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
+                account.WasEncoded = false;
+                log("User hpidirec_admin already has more than 'max_user_connections' active connections");
+            }else if(/Please login first/i.exec(response)){
+                account.Status = "Your session has been expired. Please re-login again and comeback to this page. Meaning nalogout ka sa na sa system";
+                log("Please login first");
+                CommonFunc.PopError("Please login first");
+            }else{
+                account.Status = "cannot determine the response of the server.";
+                log("User code '" + account.UserCode + "' was send to server but the server did not respond properly or the status is different");
+                log(response);
             }
 
             return account.WasEncoded;
@@ -293,59 +265,5 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         function log(msg) {
             $scope.logs.push(msg);
             console.log(msg);
-        }
-
-        function popwarning(msg) {
-            toaster.pop({
-                type: 'warning',
-                title: 'tatae ako',
-                body: msg,
-                showCloseButton: true
-            });
-        }
-        function poperror(msg) {
-            toaster.pop({
-                type: 'error',
-                title: 'teka may error',
-                body: msg,
-                showCloseButton: true
-            });
-        }
-        function popsuccess(msg) {
-            toaster.pop({
-                type: 'success',
-                title: 'ooppss',
-                body: msg,
-                showCloseButton: true
-            });
-        }
-
-
-        function isValidControl(id,name,placeholder){
-            var valid = false;
-            var element = document.getElementById(id);
-
-            if(element) {
-                valid = true;
-                if( valid  && element.getAttribute("name") != name)
-                    valid = false;
-                if( valid  && element.getAttribute("placeholder") != placeholder)
-                    valid = false;
-            }
-            return valid;
-        }
-        function isValidControlCheckByName(name,placeholder){
-            var valid = false;
-            var elements = document.getElementsByName(name);
-
-            if(elements) {
-                valid = true;
-                var element = elements[0];
-                if( valid  && element.getAttribute("name") != name)
-                    valid = false;
-                if( valid  && element.getAttribute("placeholder") != placeholder)
-                    valid = false;
-            }
-            return valid;
         }
     });
