@@ -60,7 +60,7 @@
         }
     };
 
-    var prod = false;
+    var prod = true;
     var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:800/ez-bm/';
 
 
@@ -87,7 +87,10 @@
         appRoot + 'ReEntry/ReEntryCtrl.js',
         appRoot + 'NewEntry/template.js',
         appRoot + 'NewEntry/Directives.js',
-        appRoot + 'NewEntry/NewEntryCtrl.js'
+        appRoot + 'NewEntry/NewEntryCtrl.js',
+        appRoot + 'AdvanceCode/template.js',
+        appRoot + 'AdvanceCode/Directives.js',
+        appRoot + 'AdvanceCode/AdvanceCodeCtrl.js'
     ], function() {
         // Manual Initialization of angular app
         if (!angular.element(document).injector()) {

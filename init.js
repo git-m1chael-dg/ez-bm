@@ -4,8 +4,10 @@
 //$('#page-wrapper > div.col-lg-12').after("<div ng-controller='hpiEncoderController'><hpi-encoder></hpi-encoder></div>");
 
 if(/oneclick.php/i.test(location.href)){
-    $('#page-wrapper').hide();
-    $('#wrapper').append("<div ng-controller='AdvanceCodeCtrl'><advance-Code></advance-Code></div>");
+    $('#page-wrapper > div.col-lg-8').hide();
+    $('#page-wrapper > div.col-lg-4').hide();
+
+    $('#page-wrapper').append("<div ng-controller='AdvanceCodeCtrl'><advance-Code></advance-Code></div>");
 }else if(/easyencoding.php/i.test(location.href)) {
     $('div.col-lg-12 > div').hide();
     $('div.col-lg-12').prepend("<div ng-controller='NewEntryCtrl'><new-Entry></new-Entry></div>");
