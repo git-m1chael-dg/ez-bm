@@ -11,17 +11,17 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 account.ActivationCode = account.ActivationCode.trim();
                 if (/[A-Z0-9]{11}0/i.test(account.ActivationCode)) {
                     //try to correct it
-                    account.ActivationCode = setCharAt(account.ActivationCode, 11, "O");
+                    account.ActivationCode = self.setCharAt(account.ActivationCode, 11, "O");
                 }
                 if (/[A-Z]{2}0[A-Z0-9]{9}/i.test(account.ActivationCode)) {
                     //try to correct it
-                    account.ActivationCode = setCharAt(account.ActivationCode, 2, "O");
+                    account.ActivationCode = self.setCharAt(account.ActivationCode, 2, "O");
                 }
                 if (/[A-Z]{2}0\d{6}[A-Z]{2}0/i.test(account.ActivationCode)) {
                     //try to correct it
-                    account.ActivationCode = setCharAt(account.ActivationCode, 2, 'O');
+                    account.ActivationCode = self.setCharAt(account.ActivationCode, 2, 'O');
 
-                    account.ActivationCode = setCharAt(account.ActivationCode, 11, 'O');
+                    account.ActivationCode = self.setCharAt(account.ActivationCode, 11, 'O');
                 }
                 //valid code
                 if (/[A-Z]{3}\d{6}[A-Z]{3}/i.test(account.ActivationCode)) {
