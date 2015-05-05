@@ -3,7 +3,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
             var self = this;
 
             self.version =  function(){
-              return "1.3";
+              return "1.4";
             };
 
             self.validateActivationCode = function (account) {
