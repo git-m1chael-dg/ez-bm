@@ -14,6 +14,10 @@ if(/oneclick.php/i.test(location.href)){
 }else if(/easyencoding-reentry.php/i.test(location.href)) {
     $('div.col-lg-12 > div').hide();
     $('#page-wrapper > div.col-lg-12').prepend("<div ng-controller='ReEntryCtrl'><re-Entry></re-Entry></div>");
+}else if(location.href == "http://hpidirectsales.ph/hpi_dashboard/" || "http://hpidirectsales.ph/hpi_dashboard/index.php" == location.href) {
+    //$('div.login-panel.panel.panel-default').hide();
+    $('div.col-md-4.col-md-offset-4').hide();
+    $('body > div > div').append("<div ng-controller='DashboardCtrl'><dashboard></dashboard></div>");
 }else
     $('body').after('<div class=\"navbar-fixed-top\"><h1>WRONG PAGE!</h1></div>');
 

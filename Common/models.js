@@ -16,3 +16,22 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
         self.ActivationCode = self.ActivationCode.toUpperCase();
     }
 }
+
+function User(index, userName, password) {
+    var self = this;
+    self.Index = index;
+    self.UserName = userName;
+    self.Password = password;
+    self.Status = '';
+
+    self.TotalQB = '';
+    self.TotalRebates  = '';
+    self.TotalProductVoucher = '';
+    self.NewEntry = '';
+    self.ReadyRorEncashment  = '';
+    self.EncashmentHistory  = '';
+
+    self.IsError = false;
+    self.IsSuccess = false;
+    self.WasDownloaded = false;
+}

@@ -90,7 +90,10 @@
         appRoot + 'NewEntry/NewEntryCtrl.js',
         appRoot + 'AdvanceCode/template.js',
         appRoot + 'AdvanceCode/Directives.js',
-        appRoot + 'AdvanceCode/AdvanceCodeCtrl.js'
+        appRoot + 'AdvanceCode/AdvanceCodeCtrl.js',
+        appRoot + 'Dashboard/template.js',
+        appRoot + 'Dashboard/Directives.js',
+        appRoot + 'Dashboard/DashboardCtrl.js'
     ], function() {
         // Manual Initialization of angular app
         if (!angular.element(document).injector()) {

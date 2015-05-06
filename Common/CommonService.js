@@ -3,7 +3,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
             var self = this;
 
             self.version =  function(){
-              return "1.4";
+              return "1.5";
             };
 
             self.validateActivationCode = function (account) {
@@ -131,6 +131,21 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 return element && element.getAttribute("name") == name &&
                     element.getAttribute("placeholder") == placeholder;
             };
+
+            self.isValidControlCheckByName = function (name,placeholder){
+                var valid = false;
+                var elements = document.getElementsByName(name);
+
+                if(elements) {
+                    valid = true;
+                    var element = elements[0];
+                    if( valid  && element.getAttribute("name") != name)
+                        valid = false;
+                    if( valid  && element.getAttribute("placeholder") != placeholder)
+                        valid = false;
+                }
+                return valid;
+            }
 
             self.getCurrentTime = function () {
                 var currentTime = new Date();
