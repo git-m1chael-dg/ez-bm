@@ -9,6 +9,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
         $scope.stopTask = true;
         $scope.isDone = true;
 
+
         $scope.selectAll = false;
         $scope.isInputFieldsAreValid =  inputFieldsAreValid();
 
@@ -73,11 +74,10 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 } else {
                     var success = isSuccess(user, data);
                     if (success) {
-                        DownloadDashboard(user, data);
-                        log("Successfully downloaded. User : " + user.UserName);
-                        CommonFunc.PopSuccess("Success. User : " + user.UserCode);
+                        DownloadDashboard(user, false);
+                        log("Logg-in successfully for user : " + user.UserName);
                     }else{
-                        CommonFunc.PopError("Failed encoding of User : " + user.UserName);
+                        CommonFunc.PopError("Logg-in failed for user : " + user.UserName);
                     }
                 }
             }).error(function (data, status) {
@@ -188,7 +188,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                     if (success) {
                         user.Status = 'login success';
                         log("Login success for user: " + user.UserName);
-                        DownloadDashboard(user, data);
+                        DownloadDashboard(user, true);
                     }else{
                         CommonFunc.PopError("Login failed for user: " + user.UserName);
                         $scope.isDone = true;
@@ -217,7 +217,6 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             user.IsSuccess = false;
             if(/location.href="pages/i.exec(response)){
                 user.IsError = false;
-                user.WasDownloaded = true;
             }else if (response.indexOf("max_user_connections") > -1) {
                 user.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
                 log("User hpidirec_admin already has more than 'max_user_connections' active connections");
@@ -238,7 +237,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             console.log(msg);
         }
 
-        function DownloadDashboard(user) {
+        function DownloadDashboard(user, proceedToNext) {
 
             log("Downloading user's dashboard. User : " + user.UserName);
 
@@ -254,13 +253,19 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                     } else if (status == 500) {
                         log('Internal Server Error [500].');
                     } else {
+
                         ParseDashboardData(user, data);
 
-                        self.currentRequestIndex++;
+                        user.WasDownloaded = true;
 
-                        if (self.currentRequestIndex < $scope.users.length) {
-                            next();
-                        } else
+                        if(proceedToNext) {
+                            self.currentRequestIndex++;
+
+                            if (self.currentRequestIndex < $scope.users.length) {
+                                next();
+                            } else
+                                $scope.isDone = true;
+                        }else
                             $scope.isDone = true;
                     }
                 }).error(function (data, status) {
