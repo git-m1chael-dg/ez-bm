@@ -97,45 +97,45 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                         </tr>
                         </thead>
                         <tbody>
-                        <tr ng-repeat="user in users" ng-class="{danger: user.IsError, success: user.IsSuccess}">
-                            <th>
+                        <tr ng-repeat="user in users">
+                            <td>
                                 {{user.Index}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <input type="input" ng-model="user.UserName"/>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <input type="input" ng-model="user.Password"/>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 {{user.TotalQB}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 {{user.TotalRebates}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 {{user.TotalProductVoucher}}
-                            </th>
-                            <th>
-                                {{user.NewEntryCode}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
+                                {{user.NewEntry}}
+                            </td>
+                            <td ng-class="{info: user.HasBlue}">
                                 {{user.ReadyRorEncashment}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 {{user.EncashmentHistory}}
-                            </th>
-                            <th>
+                            </td>
+                            <td ng-class="{danger: user.IsError, success: user.IsSuccess}">
                                 {{user.Status}}
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <input type="checkbox" ng-model="user.WasDownloaded"/>
-                            </th>
-                            <th>
+                            </td>
+                            <td>
                                 <button ng-click="LoginToDownloadOneItem(user)" ng-disabled="!isDone">
-                                    Download
+                                    {{user.DownloadBtn}}
                                 </button>
-                            </th>
+                            </td>
                         </tr>
                         </tbody>
                     </table>

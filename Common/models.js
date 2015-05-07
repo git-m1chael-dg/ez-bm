@@ -34,4 +34,8 @@ function User(index, userName, password) {
     self.IsError = false;
     self.IsSuccess = false;
     self.WasDownloaded = false;
+    self.HasBlue = false;
+    self.Loading = false;
+
+    self.DownloadBtn = "Download";
 }

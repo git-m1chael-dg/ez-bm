@@ -107,7 +107,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
 
             self.isSelectedAll = function (accounts) {
                 for (var i = 0; i < accounts.length; i++) {
-                    if (!accounts[i].Selected)
+                    if (!accounts[i].WasEncoded)
                         return false;
                 }
                 return true;

@@ -55,14 +55,14 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
 
             $scope.isDone = false;
             $scope.stopTask = false;
+            user.DownloadBtn = "Downloading..";
 
             var postData = getPostData(user);
-
 
             $http.post(self.PostUrl, postData, {
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status) {
-                $scope.isDone = true;
+                var success = false;
                 if (status == 0) {
                     log('No connection. Verify application is running.');
                 } else if (status == 401) {
@@ -72,13 +72,17 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 } else if (status == 500) {
                     log('Internal Server Error [500].');
                 } else {
-                    var success = isSuccess(user, data);
+                    success = isSuccess(user, data);
                     if (success) {
                         DownloadDashboard(user, false);
                         log("Logg-in successfully for user : " + user.UserName);
                     }else{
                         CommonFunc.PopError("Logg-in failed for user : " + user.UserName);
                     }
+                }
+                if(success == false) {
+                    $scope.isDone = true;
+                    user.DownloadBtn = "Download";
                 }
             }).error(function (data, status) {
                 if (status == 0) {
@@ -94,6 +98,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 }
                 log("Failure. User : " + user.UserName);
                 $scope.isDone = true;
+                user.DownloadBtn = "Download";
                 CommonFunc.PopError("Failure. User : " + user.UserName);
             });
 
@@ -101,11 +106,15 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
 
         $scope.selectAllFn = function (selectAll) {
             angular.forEach($scope.users, function (user) {
-                user.WasEncoded = selectAll;
+                user.WasDownloaded = selectAll;
             });
         };
         $scope.isSelectedAll = function () {
-            return CommonFunc.isSelectedAll($scope.users);
+            for (var i = 0; i < $scope.users.length; i++) {
+                if (!$scope.users[i].WasDownloaded)
+                    return false;
+            }
+            return true;
         };
 
         $scope.getArrayForCsv = function () {
@@ -159,6 +168,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                     next();
                     return;
                 }
+                user.DownloadBtn = "Downloading...";
 
                 var postData = getPostData(user);
 
@@ -174,7 +184,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             $http.post(self.PostUrl, postData, {
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             }).success(function (data, status) {
-
+                var success = false;
                 if (status == 0) {
                     log('No connection. Verify application is running.');
                 } else if (status == 401) {
@@ -184,15 +194,18 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 } else if (status == 500) {
                     log('Internal Server Error [500].');
                 } else {
-                    var success = isSuccess(user, data);
+                    success = isSuccess(user, data);
                     if (success) {
                         user.Status = 'login success';
                         log("Login success for user: " + user.UserName);
                         DownloadDashboard(user, true);
                     }else{
                         CommonFunc.PopError("Login failed for user: " + user.UserName);
-                        $scope.isDone = true;
                     }
+                }
+                if(success == false){
+                    $scope.isDone = true;
+                    user.DownloadBtn = "Download";
                 }
             }).error(function (data, status) {
                 if (status == 0) {
@@ -208,6 +221,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 }
                 log("Failure. User : " + user.UserName);
                 $scope.isDone = true;
+                user.DownloadBtn = "Download";
                 CommonFunc.PopError("Failure. User : " + user.UserName);
             });
         }
@@ -217,6 +231,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             user.IsSuccess = false;
             if(/location.href="pages/i.exec(response)){
                 user.IsError = false;
+                return true;
             }else if (response.indexOf("max_user_connections") > -1) {
                 user.Status = "User hpidirec_admin already has more than 'max_user_connections' active connections";
                 log("User hpidirec_admin already has more than 'max_user_connections' active connections");
@@ -229,7 +244,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 log(response);
             }
 
-            return user.WasDownloaded;
+            return false;
         }
 
         function log(msg) {
@@ -257,7 +272,8 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                         ParseDashboardData(user, data);
 
                         user.WasDownloaded = true;
-
+                        user.IsSuccess = true;
+                        user.DownloadBtn = "Download";
                         if(proceedToNext) {
                             self.currentRequestIndex++;
 
@@ -282,12 +298,14 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                     }
                     log("Failure. User : " + user.UserName);
                     $scope.isDone = true;
+                    user.DownloadBtn = "Download";
                     CommonFunc.PopError("Failure. Fetching the dashboard info of user : " + user.UserName);
                 });
         }
 
         function ParseDashboardData(user, reponse) {
-            var el = $( '<div></div>' );
+            var m;
+            var el = $( '<div display="block:none"></div>' );
             el.html(reponse);
 
             user.TotalQB = $('#MBonus > h4 > span',el).text();
@@ -296,5 +314,11 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             user.NewEntry = $('#page-wrapper > div:nth-child(2) > div:nth-child(1) > div > a > div > span.pull-left > b',el).text();
             user.ReadyRorEncashment  = $('#page-wrapper > div:nth-child(2) > div:nth-child(2) > div > a > div > span.pull-left > b',el).text();
             user.EncashmentHistory  = $('#page-wrapper > div:nth-child(2) > div:nth-child(3) > div > a > div > span.pull-left > b',el).text();
+            if ((m = /([0-9]+)/i.exec(user.ReadyRorEncashment)) !== null && m[1]!='0') {
+                user.ReadyRorEncashment = m[1];
+                user.HasBlue = true;
+                user.Status = "Blue Na!!";
+            }else
+                user.ReadyRorEncashment = '-';
         }
     });
