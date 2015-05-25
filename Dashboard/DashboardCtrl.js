@@ -19,6 +19,9 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
         $scope.parseMessage = '';
         $scope.logs = [];
         $scope.Parse = function () {
+
+            saveData();
+
             var allTextLines = $scope.csvContent.split(/\r\n|\n/);
             $scope.users = [];
             var index = 1;
@@ -38,6 +41,8 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
 
             $scope.parseMessage = "Parsed " + $scope.users.length + " record(s)";
         };
+
+
 
         $scope.Stop = function () {
             $scope.stopTask = true;
@@ -120,6 +125,28 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
         $scope.getArrayForCsv = function () {
             return CommonFunc.getArrayForCsv($scope.users);
         };
+
+        function loadData(){
+            if (!supportsLocalStorage()) { return; }
+
+            $scope.csvContent = localStorage["ez-bm.users"];
+        }
+
+        loadData();
+
+        function supportsLocalStorage() {
+            try {
+                return 'localStorage' in window && window['localStorage'] !== null;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function saveData(){
+            if (!supportsLocalStorage()) { return; }
+
+            localStorage["ez-bm.users"] = $scope.csvContent;
+        }
 
         function inputFieldsAreValid () {
             var isValid = true;
