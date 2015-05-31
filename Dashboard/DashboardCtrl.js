@@ -336,7 +336,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             el.html(reponse);
 
             user.TotalQB = $('#MBonus > h4 > span',el).text();
-            user.TotalRebates  = $('#Rbonus > h4 > span',el).text();
+            user.TotalRebates  = $('#Rbonus > h4 > span',el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)',el).text() + "/" +$('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)',el).text() + ")";
             user.TotalProductVoucher = $('#Pvouchers > h4 > span',el).text();
             user.NewEntry = $('#page-wrapper > div:nth-child(2) > div:nth-child(1) > div > a > div > span.pull-left > b',el).text();
             user.ReadyRorEncashment  = $('#page-wrapper > div:nth-child(2) > div:nth-child(2) > div > a > div > span.pull-left > b',el).text();
@@ -347,5 +347,13 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
                 user.Status = "Blue Na!!";
             }else
                 user.ReadyRorEncashment = '-';
+
+            //clean up
+            if(user.TotalRebates == "P(/)")
+                user.TotalRebates = "-";
+            if(user.TotalQB == "P")
+                user.TotalQB = "-";
+            if(user.TotalProductVoucher == "Php.")
+                user.TotalProductVoucher = "-";
         }
     });
