@@ -30,6 +30,7 @@ function User(index, userName, password) {
     self.NewEntry = '';
     self.ReadyRorEncashment  = '';
     self.EncashmentHistory  = '';
+    self.ActiveAccnt = '';
 
     self.IsError = false;
     self.IsSuccess = false;

@@ -123,7 +123,22 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
         };
 
         $scope.getArrayForCsv = function () {
-            return CommonFunc.getArrayForCsv($scope.users);
+            var list = [];
+
+            angular.forEach($scope.users, function (account) {
+                list.push({
+                    Username: account.UserName,
+                    TotalQB: account.TotalQB,
+                    Rebates: account.TotalRebates,
+                    TotalProductVoucher: account.TotalProductVoucher,
+                    ActiveAccnt: account.ActiveAccnt,
+                    NewEntry: account.NewEntry,
+                    ReadyRorEncashment: account.ReadyRorEncashment,
+                    EncashmentHistory: account.EncashmentHistory
+                });
+            });
+
+            return list;
         };
 
         function loadData(){
@@ -336,24 +351,27 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout,toaster,
             el.html(reponse);
 
             user.TotalQB = $('#MBonus > h4 > span',el).text();
-            user.TotalRebates  = $('#Rbonus > h4 > span',el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)',el).text() + "/" +$('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)',el).text() + ")";
+            user.TotalRebates = $('#Rbonus > h4 > span',el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)',el).text() + "/" +$('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)',el).text() + ")";
             user.TotalProductVoucher = $('#Pvouchers > h4 > span',el).text();
             user.NewEntry = $('#page-wrapper > div:nth-child(2) > div:nth-child(1) > div > a > div > span.pull-left > b',el).text();
-            user.ReadyRorEncashment  = $('#page-wrapper > div:nth-child(2) > div:nth-child(2) > div > a > div > span.pull-left > b',el).text();
-            user.EncashmentHistory  = $('#page-wrapper > div:nth-child(2) > div:nth-child(3) > div > a > div > span.pull-left > b',el).text();
-            if ((m = /([0-9]+)/i.exec(user.ReadyRorEncashment)) !== null && m[1]!='0') {
+            user.ReadyRorEncashment = $('#page-wrapper > div:nth-child(2) > div:nth-child(2) > div > a > div > span.pull-left > b',el).text();
+            user.EncashmentHistory = $('#page-wrapper > div:nth-child(2) > div:nth-child(3) > div > a > div > span.pull-left > b',el).text();
+            if ((m = /([0-9]+)/i.exec(user.ReadyRorEncashment)) != null && m[1]!='0') {
                 user.ReadyRorEncashment = m[1];
                 user.HasBlue = true;
                 user.Status = "Blue Na!!";
             }else
                 user.ReadyRorEncashment = '-';
 
+            user.ActiveAccnt = $('#income-summary > tbody > tr',el).length;
+
+
             //clean up
-            if(user.TotalRebates == "P(/)")
+            if(user.TotalRebates.trim() == "P(/)")
                 user.TotalRebates = "-";
-            if(user.TotalQB == "P")
+            if(user.TotalQB.trim() == "P")
                 user.TotalQB = "-";
-            if(user.TotalProductVoucher == "Php.")
+            if(user.TotalProductVoucher.trim() == "Php.")
                 user.TotalProductVoucher = "-";
         }
     });

@@ -53,6 +53,9 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                         </button>
                         <button type="submit" class="btn btn-danger" ng-click="StopEncoding()">Stop
                         </button>
+                        <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="dashboard.csv"
+                                csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">Export
+                        </button>
                     </div>
                     <table class="table">
                         <thead>
@@ -74,6 +77,9 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                             </th>
                             <th>
                                 Total Product Voucher
+                            </th>
+                            <th>
+                                Active Accounts
                             </th>
                             <th>
                                 NewEntry Code
@@ -117,6 +123,9 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 {{user.TotalProductVoucher}}
                             </td>
                             <td>
+                                {{user.ActiveAccnt}}
+                            </td>
+                            <td>
                                 {{user.NewEntry}}
                             </td>
                             <td ng-class="{info: user.HasBlue}">
@@ -143,6 +152,9 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                         <button type="submit" class="btn btn-primary" ng-click="Download()" ng-disabled="!isDone">Download All
                         </button>
                         <button type="submit" class="btn btn-danger" ng-click="Stop()">Stop
+                        </button>
+                        <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="dashboard.csv"
+                                csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">Export
                         </button>
                     </div>
                 </div>
