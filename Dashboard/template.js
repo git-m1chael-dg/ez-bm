@@ -49,7 +49,7 @@ dashboardTemplate += "                <div class=\"panel-body\">";
 dashboardTemplate += "                    <div class=\"btn-group\" role=\"group\" aria-label=\"...\">";
 dashboardTemplate += "                        <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"Download()\" ng-disabled=\"!isDone\">Download All";
 dashboardTemplate += "                        <\/button>";
-dashboardTemplate += "                        <button type=\"submit\" class=\"btn btn-danger\" ng-click=\"StopEncoding()\">Stop";
+dashboardTemplate += "                        <button type=\"submit\" class=\"btn btn-danger\" ng-click=\"Stop()\">Stop";
 dashboardTemplate += "                        <\/button>";
 dashboardTemplate += "                        <button type=\"button\" class=\"btn btn btn-default\" ng-csv=\"getArrayForCsv()\" filename=\"dashboard.csv\"";
 dashboardTemplate += "                                csv-header=\"['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']\">Export";
