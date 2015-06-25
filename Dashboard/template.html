@@ -56,98 +56,93 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                         <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="dashboard.csv"
                                 csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">Export
                         </button>
+                        <input type="checkbox" ng-change="selectAllFn(selectAll)"
+                               ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
                     </div>
-                    <table class="table">
-                        <thead>
-                        <tr>
-                            <th>
-                                #
-                            </th>
-                            <th>
-                                User Name
-                            </th>
-                            <th>
-                                Password
-                            </th>
-                            <th>
-                                Total QB
-                            </th>
-                            <th>
-                                Total Rebates
-                            </th>
-                            <th>
-                                Total Product Voucher
-                            </th>
-                            <th>
-                                Active Accounts
-                            </th>
-                            <th>
-                                NewEntry Code
-                            </th>
-                            <th>
-                                Ready Ror Encashment
-                            </th>
-                            <th>
-                                Encashment History
-                            </th>
-                            <th>
-                                Status
-                            </th>
-                            <th>
-                                    <input type="checkbox" ng-change="selectAllFn(selectAll)"
-                                           ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
-                            </th>
-                            <th>
-
-                            </th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr ng-repeat="user in users">
-                            <td>
-                                {{user.Index}}
-                            </td>
-                            <td>
-                                <input type="input" ng-model="user.UserName"/>
-                            </td>
-                            <td>
-                                <input type="input" ng-model="user.Password"/>
-                            </td>
-                            <td>
-                                {{user.TotalQB}}
-                            </td>
-                            <td>
-                                {{user.TotalRebates}}
-                            </td>
-                            <td>
-                                {{user.TotalProductVoucher}}
-                            </td>
-                            <td>
-                                {{user.ActiveAccnt}}
-                            </td>
-                            <td>
-                                {{user.NewEntry}}
-                            </td>
-                            <td ng-class="{info: user.HasBlue}">
-                                {{user.ReadyRorEncashment}}
-                            </td>
-                            <td>
-                                {{user.EncashmentHistory}}
-                            </td>
-                            <td ng-class="{danger: user.IsError, success: user.IsSuccess}">
-                                {{user.Status}}
-                            </td>
-                            <td>
-                                <input type="checkbox" ng-model="user.WasDownloaded"/>
-                            </td>
-                            <td>
-                                <button ng-click="LoginToDownloadOneItem(user)" ng-disabled="!isDone">
-                                    {{user.DownloadBtn}}
-                                </button>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
+                    <ul>
+                        <li ng-repeat="user in users">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">No</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.Index}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">User Name</label>
+                                    <div class="col-sm-10">
+                                        <input type="input" ng-model="user.UserName"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Password</label>
+                                    <div class="col-sm-10">
+                                        <input type="input" ng-model="user.Password"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Total QB</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.TotalQB}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Total Rebates</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.TotalRebates}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Total Product Voucher</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.TotalProductVoucher}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Active Accounts</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.ActiveAccnt}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">NewEntry Code</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.NewEntry}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Ready Ror Encashment</label>
+                                    <div class="col-sm-10" ng-class="{info: user.HasBlue}">
+                                        <label>{{user.ReadyRorEncashment}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Encashment History</label>
+                                    <div class="col-sm-10">
+                                        <label>{{user.EncashmentHistory}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Status</label>
+                                    <div class="col-sm-10" ng-class="{danger: user.IsError, success: user.IsSuccess}">
+                                        <label>{{user.Status}}</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <input type="checkbox" ng-model="user.WasDownloaded"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-2 col-sm-10">
+                                        <button ng-click="LoginToDownloadOneItem(user)" ng-disabled="!isDone" class="btn btn-default">
+                                            {{user.DownloadBtn}}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
                     <div class="btn-group" role="group" aria-label="...">
                         <button type="submit" class="btn btn-primary" ng-click="Download()" ng-disabled="!isDone">Download All
                         </button>
@@ -156,6 +151,8 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                         <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()" filename="dashboard.csv"
                                 csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">Export
                         </button>
+                        <input type="checkbox" ng-change="selectAllFn(selectAll)"
+                               ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
                     </div>
                 </div>
             </div>

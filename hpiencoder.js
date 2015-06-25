@@ -60,8 +60,8 @@
         }
     };
 
-    var prod = true;
-    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:800/ez-bm/';
+    var prod = false;
+    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:63342/ez-bm/';
 
 
     // Loading style definitions

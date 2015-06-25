@@ -40,3 +40,4 @@ function User(index, userName, password) {
 
     self.DownloadBtn = "Download";
 }
+
