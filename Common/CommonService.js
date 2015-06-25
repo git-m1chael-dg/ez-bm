@@ -153,6 +153,16 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 return time;
             };
 
+            var timer;
+
+            self.StartTimer = function (callBack) {
+                self.StopTimer();
+                timer = setTimeout(callBack, 3000);
+            };
+            self.StopTimer = function () {
+                if(timer)
+                    clearTimeout(timer);
+            };
         };
 
         return new commonFunc($http,toaster);

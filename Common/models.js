@@ -27,6 +27,7 @@ function User(index, userName, password) {
     self.TotalQB = '';
     self.TotalRebates  = '';
     self.TotalProductVoucher = '';
+    self.Wallet = '';
     self.NewEntry = '';
     self.ReadyRorEncashment  = '';
     self.EncashmentHistory  = '';
@@ -41,3 +42,16 @@ function User(index, userName, password) {
     self.DownloadBtn = "Download";
 }
 
+
+function DownloadState(){
+    var self = this;
+    self.Dashboard=false;
+    self.ReadyForEncashment=false;
+    self.EncashmentHistory=false;
+    self.ActiveAccnt=false;
+    self.Wallet=false;
+    self.MyEarning=false;
+    self.AllDownloaded = function(){
+        return self.Dashboard && self.ReadyForEncashment && self.EncashmentHistory && self.ActiveAccnt && self.Wallet && self.MyEarning;
+    };
+};

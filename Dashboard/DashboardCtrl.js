@@ -6,7 +6,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
     self.WalletUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/wallet.php";
     self.MyEarningUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/myearnings.php";
     self.ReadyForEncashmentUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/ready-for-encashment.php";
-    self.EncashmentHistoryUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/ready-for-encashment.php";
+    self.EncashmentHistoryUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/encashment-history.php";
     self.ActiveAndInActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/newly-encoded.php";
 
     self.currentRequestIndex = 0;
@@ -304,15 +304,6 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         console.log(msg);
     }
 
-    function DownloadState(){
-        this.Dashboard=false;
-        this.ReadyForEncashment=false;
-        this.EncashmentHistory=false;
-        this.ActiveAccnt=false;
-        this.Wallet=false;
-        this.MyEarning=false;
-    };
-
     var downloadState = new DownloadState();
     function DownloadDashboard(user, proceedToNext) {
 
@@ -323,10 +314,13 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         getData(self.DahsboardUrl, function (data,status) {
             downloadState.Dashboard = true;
             if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.ActiveAccnt = $('#income-summary > tbody > tr', el).length;
+
+                DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
+                DoNextIfAllDownloaded(proceedToNext,false,user);
             }
 
         }, function (data,status) {
@@ -337,10 +331,13 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         getData(self.WalletUrl, function (data,status) {
             downloadState.Wallet = true;
             if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.Wallet = $('#maturitybonus', el).text();
+
+                DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
+                DoNextIfAllDownloaded(proceedToNext,false,user);
             }
 
         }, function (data,status) {
@@ -351,10 +348,15 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         getData(self.MyEarningUrl, function (data,status) {
             downloadState.MyEarning = true;
             if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.TotalQB = $('#MBonus > h4 > span', el).text();
+                user.TotalRebates = $('#Rbonus > h4 > span', el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text() + "/" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text() + ")";
+                user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
+
+                DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
+                DoNextIfAllDownloaded(proceedToNext,false,user);
             }
 
         }, function (data,status) {
@@ -365,10 +367,19 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         getData(self.ReadyForEncashmentUrl, function (data,status) {
             downloadState.ReadyForEncashment = true;
             if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.ReadyRorEncashment = $('#income-summary > tbody > tr', el).length;
+
+                if (user.ReadyRorEncashment && user.ReadyRorEncashment != 0) {
+                    user.HasBlue = true;
+                    user.Status = "Blue Na!!";
+                } else
+                    user.ReadyRorEncashment = '-';
+
+                DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
+                DoNextIfAllDownloaded(proceedToNext,false,user);
             }
 
         }, function (data,status) {
@@ -378,13 +389,19 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
 
         getData(self.EncashmentHistoryUrl, function (data,status) {
             downloadState.EncashmentHistory = true;
-            if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
-            }
 
+            if(status==200) {
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.EncashmentHistory = $('#income-summary > tbody > tr', el).length;
+                if (user.EncashmentHistory == 0) {
+                    user.EncashmentHistory = '-';
+                }
+
+                DoNextIfAllDownloaded(proceedToNext,true,user);
+            }else{
+                DoNextIfAllDownloaded(proceedToNext,false,user);
+            }
         }, function (data,status) {
             downloadState.EncashmentHistory = true;
             DownloadErrorHandle(user);
@@ -393,10 +410,15 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         getData(self.ActiveAndInActiveAccntUrl, function (data,status) {
             downloadState.ActiveAccnt = true;
             if(status==200) {
-                ParseDashboardData(user, data);
-                DoNextIfAllDownloaded(proceedToNext,true);
+                var el = $('<div display="block:none"></div>');
+                el.html(data);
+                user.NewEntry = $('#income-summary > tbody > tr', el).length;
+                if (user.NewEntry == 0) {
+                    user.NewEntry = '-';
+                }
+                DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
-                DoNextIfAllDownloaded(proceedToNext,false);
+                DoNextIfAllDownloaded(proceedToNext,false,user);
             }
 
         }, function (data,status) {
@@ -411,25 +433,33 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
         user.DownloadBtn = "Download";
         CommonFunc.PopError("Failure. Fetching the dashboard info of user : " + user.UserName);
     }
-    function DoNextIfAllDownloaded(proceedToNext,isSuccessful){
+    function DoNextIfAllDownloaded(proceedToNext,isSuccessful,user){
 
-        if(isSuccessful && downloadState.ActiveAccnt && downloadState.Dashboard &&
-            downloadState.MyEarning && downloadState.PaidAccount &&
-            downloadState.ReadyForEncashment && downloadState.Wallet) {
-            user.WasDownloaded = true;
-            user.IsSuccess = true;
-            user.DownloadBtn = "Download";
-            if (proceedToNext) {
-                self.currentRequestIndex++;
+        if(downloadState.AllDownloaded()) {
+            if(isSuccessful) {
+                //clean up
+                if (user.TotalRebates.trim() == "P(/)")
+                    user.TotalRebates = "-";
+                if (user.TotalQB.trim() == "P")
+                    user.TotalQB = "-";
+                if (user.TotalProductVoucher.trim() == "Php.")
+                    user.TotalProductVoucher = "-";
 
-                if (self.currentRequestIndex < $scope.users.length) {
-                    next();
+                user.WasDownloaded = true;
+                user.IsSuccess = true;
+                user.DownloadBtn = "Download";
+                if (proceedToNext) {
+                    self.currentRequestIndex++;
+
+                    if (self.currentRequestIndex < $scope.users.length) {
+                        next();
+                    } else
+                        $scope.isDone = true;
                 } else
                     $scope.isDone = true;
-            } else
+            }else
                 $scope.isDone = true;
-        }else
-            $scope.isDone = true;
+        }
 
     }
     function getData(url, success, error) {
@@ -464,35 +494,5 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
                 error(data,status);
 
             });
-    }
-
-    function ParseDashboardData(user, reponse) {
-        var m;
-        var el = $('<div display="block:none"></div>');
-        el.html(reponse);
-
-        user.TotalQB = $('#MBonus > h4 > span', el).text();
-        user.TotalRebates = $('#Rbonus > h4 > span', el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text() + "/" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text() + ")";
-        user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
-        user.NewEntry = $('#page-wrapper > div:nth-child(2) > div:nth-child(1) > div > a > div > span.pull-left > b', el).text();
-        user.ReadyRorEncashment = $('#page-wrapper > div:nth-child(2) > div:nth-child(2) > div > a > div > span.pull-left > b', el).text();
-        user.EncashmentHistory = $('#page-wrapper > div:nth-child(2) > div:nth-child(3) > div > a > div > span.pull-left > b', el).text();
-        if ((m = /([0-9]+)/i.exec(user.ReadyRorEncashment)) != null && m[1] != '0') {
-            user.ReadyRorEncashment = m[1];
-            user.HasBlue = true;
-            user.Status = "Blue Na!!";
-        } else
-            user.ReadyRorEncashment = '-';
-
-        user.ActiveAccnt = $('#income-summary > tbody > tr', el).length;
-
-
-        //clean up
-        if (user.TotalRebates.trim() == "P(/)")
-            user.TotalRebates = "-";
-        if (user.TotalQB.trim() == "P")
-            user.TotalQB = "-";
-        if (user.TotalProductVoucher.trim() == "Php.")
-            user.TotalProductVoucher = "-";
     }
 });

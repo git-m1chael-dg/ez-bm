@@ -61,7 +61,7 @@
     };
 
     var prod = false;
-    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:63342/ez-bm/';
+    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:33705/ez-bm/';
 
 
     // Loading style definitions
