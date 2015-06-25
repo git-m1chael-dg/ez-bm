@@ -334,7 +334,8 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
                 var el = $('<div display="block:none"></div>');
                 el.html(data);
                 user.Wallet = $('#maturitybonus', el).text();
-
+                if (user.Wallet.trim() == "Php.0")
+                    user.Wallet = "-";
                 DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
                 DoNextIfAllDownloaded(proceedToNext,false,user);
@@ -354,6 +355,13 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
                 user.TotalRebates = $('#Rbonus > h4 > span', el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text() + "/" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text() + ")";
                 user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
 
+                //clean up
+                if (user.TotalRebates.trim() == "P(/)" || user.TotalRebates.trim() == "P (/)")
+                    user.TotalRebates = "-";
+                if (user.TotalQB.trim() == "P")
+                    user.TotalQB = "-";
+                if (user.TotalProductVoucher.trim() == "Php.")
+                    user.TotalProductVoucher = "-";
                 DoNextIfAllDownloaded(proceedToNext,true,user);
             }else{
                 DoNextIfAllDownloaded(proceedToNext,false,user);
@@ -437,14 +445,6 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
 
         if(downloadState.AllDownloaded()) {
             if(isSuccessful) {
-                //clean up
-                if (user.TotalRebates.trim() == "P(/)")
-                    user.TotalRebates = "-";
-                if (user.TotalQB.trim() == "P")
-                    user.TotalQB = "-";
-                if (user.TotalProductVoucher.trim() == "Php.")
-                    user.TotalProductVoucher = "-";
-
                 user.WasDownloaded = true;
                 user.IsSuccess = true;
                 user.DownloadBtn = "Download";
