@@ -33,6 +33,7 @@ function Account(userCode, referredBy, activationCode) {
 
 
 $('#page-wrapper').append(advnceTemplate);
+$('div.my-form').append(advnceTemplate);
 
 var self={};
 
@@ -53,13 +54,17 @@ $('#parse').click(function () {
     for (var count = 1; count < self.accounts.length; count++)
         $('.my-form .add-box').click();
 
+    var indx = 0;
     $.each($('.text-box'), function (index, el) {
-        var account = self.accounts[index];
+        var account = self.accounts[indx];
 
         var textBox = $('.inputroll', el);
-        $(textBox[0]).val(account.UserCode);
-        $(textBox[1]).val(account.ReferredBy);
-        $(textBox[2]).val(account.ActivationCode);
+        if(textBox.length > 0) {
+            $(textBox[0]).val(account.UserCode);
+            $(textBox[1]).val(account.ReferredBy);
+            $(textBox[2]).val(account.ActivationCode);
+            indx++;
+        }
     });
 });
 
