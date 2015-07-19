@@ -55,3 +55,14 @@ function DownloadState(){
         return self.Dashboard && self.ReadyForEncashment && self.EncashmentHistory && self.ActiveAccnt && self.Wallet && self.MyEarning;
     };
 };
+
+function DashboardSetting(){
+    var self = this;
+    self.DownloadActiveAccounts=false;
+    self.DownloadReadyForEncashment=true;
+    self.DownloadEncashmentHistory=false;
+    self.DownloadInActiveAccounts=false;
+    self.DownloadWallet=false;
+    self.DownloadMyEarning=true;
+};
+

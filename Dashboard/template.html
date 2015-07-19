@@ -59,8 +59,44 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">
                             Export
                         </button>
-                        <input type="checkbox" ng-change="selectAllFn(selectAll)"
-                               ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-md-offset-2">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadActiveAccounts"/> Download Active
+                                    Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadReadyForEncashment"/> Download
+                                    Ready for Encashment Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadEncashmentHistory"/> Download
+                                    Encashment History/Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadInActiveAccounts"/> Download In
+                                    Active Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadWallet"/> Download E-Wallet?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadMyEarning"/> Download My Earnings?
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <table class="table">
                         <thead>
@@ -104,7 +140,6 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                        ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
                             </th>
                             <th>
-
                             </th>
                         </tr>
                         </thead>
@@ -166,8 +201,6 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">
                             Export
                         </button>
-                        <input type="checkbox" ng-change="selectAllFn(selectAll)"
-                               ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
                     </div>
                 </div>
             </div>

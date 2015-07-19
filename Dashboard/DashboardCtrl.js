@@ -7,7 +7,11 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
     self.MyEarningUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/myearnings.php";
     self.ReadyForEncashmentUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/ready-for-encashment.php";
     self.EncashmentHistoryUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/encashment-history.php";
-    self.ActiveAndInActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/newly-encoded.php";
+    self.InActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/newly-encoded.php";
+    self.ActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/actives.php";
+
+    // settings
+    self.settings = $scope.settings = new DashboardSetting();
 
     self.currentRequestIndex = 0;
 
@@ -311,128 +315,152 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
 
         downloadState = new DownloadState();
 
-        getData(self.DahsboardUrl, function (data,status) {
-            downloadState.Dashboard = true;
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.ActiveAccnt = $('#income-summary > tbody > tr', el).length;
+        if (self.settings.DownloadActiveAccounts) {
+            getData(self.ActiveAccntUrl, function (data, status) {
+                downloadState.Dashboard = true;
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.ActiveAccnt = $('#income-summary > tbody > tr', el).length;
 
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
-
-        }, function (data,status) {
-            downloadState.Dashboard = true;
-            DownloadErrorHandle(user);
-        });
-
-        getData(self.WalletUrl, function (data,status) {
-            downloadState.Wallet = true;
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.Wallet = $('#maturitybonus', el).text();
-                if (user.Wallet.trim() == "Php.0")
-                    user.Wallet = "-";
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
-
-        }, function (data,status) {
-            downloadState.Wallet = true;
-            DownloadErrorHandle(user);
-        });
-
-        getData(self.MyEarningUrl, function (data,status) {
-            downloadState.MyEarning = true;
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.TotalQB = $('#MBonus > h4 > span', el).text();
-                user.TotalRebates = $('#Rbonus > h4 > span', el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text() + "/" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text() + ")";
-                user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
-
-                //clean up
-                if (user.TotalRebates.trim() == "P(/)" || user.TotalRebates.trim() == "P (/)")
-                    user.TotalRebates = "-";
-                if (user.TotalQB.trim() == "P")
-                    user.TotalQB = "-";
-                if (user.TotalProductVoucher.trim() == "Php.")
-                    user.TotalProductVoucher = "-";
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
-
-        }, function (data,status) {
-            downloadState.MyEarning = true;
-            DownloadErrorHandle(user);
-        });
-
-        getData(self.ReadyForEncashmentUrl, function (data,status) {
-            downloadState.ReadyForEncashment = true;
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.ReadyRorEncashment = $('#income-summary > tbody > tr', el).length;
-
-                if (user.ReadyRorEncashment && user.ReadyRorEncashment != 0) {
-                    user.HasBlue = true;
-                    user.Status = "Blue Na!!";
-                } else
-                    user.ReadyRorEncashment = '-';
-
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
-
-        }, function (data,status) {
-            downloadState.ReadyForEncashment = true;
-            DownloadErrorHandle(user);
-        });
-
-        getData(self.EncashmentHistoryUrl, function (data,status) {
-            downloadState.EncashmentHistory = true;
-
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.EncashmentHistory = $('#income-summary > tbody > tr', el).length;
-                if (user.EncashmentHistory == 0) {
-                    user.EncashmentHistory = '-';
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
                 }
 
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
-        }, function (data,status) {
-            downloadState.EncashmentHistory = true;
-            DownloadErrorHandle(user);
-        });
+            }, function (data, status) {
+                downloadState.Dashboard = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
+            downloadState.Dashboard = true;
+        }
 
-        getData(self.ActiveAndInActiveAccntUrl, function (data,status) {
-            downloadState.ActiveAccnt = true;
-            if(status==200) {
-                var el = $('<div display="block:none"></div>');
-                el.html(data);
-                user.NewEntry = $('#income-summary > tbody > tr', el).length;
-                if (user.NewEntry == 0) {
-                    user.NewEntry = '-';
+        if (self.settings.DownloadWallet) {
+            getData(self.WalletUrl, function (data, status) {
+                downloadState.Wallet = true;
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.Wallet = $('#maturitybonus', el).text();
+                    if (user.Wallet.trim() == "Php.0")
+                        user.Wallet = "-";
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
                 }
-                DoNextIfAllDownloaded(proceedToNext,true,user);
-            }else{
-                DoNextIfAllDownloaded(proceedToNext,false,user);
-            }
 
-        }, function (data,status) {
+            }, function (data, status) {
+                downloadState.Wallet = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
+            downloadState.Wallet = true;
+        }
+
+        if (self.settings.DownloadMyEarning) {
+            getData(self.MyEarningUrl, function (data, status) {
+                downloadState.MyEarning = true;
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.TotalQB = $('#MBonus > h4 > span', el).text();
+                    user.TotalRebates = $('#Rbonus > h4 > span', el).text() + "(" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text() + "/" + $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text() + ")";
+                    user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
+
+                    //clean up
+                    if (user.TotalRebates.trim() == "P(/)" || user.TotalRebates.trim() == "P (/)")
+                        user.TotalRebates = "-";
+                    if (user.TotalQB.trim() == "P")
+                        user.TotalQB = "-";
+                    if (user.TotalProductVoucher.trim() == "Php.")
+                        user.TotalProductVoucher = "-";
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
+                }
+
+            }, function (data, status) {
+                downloadState.MyEarning = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
+            downloadState.MyEarning = true;
+        }
+
+        if (self.settings.DownloadReadyForEncashment) {
+            getData(self.ReadyForEncashmentUrl, function (data, status) {
+                downloadState.ReadyForEncashment = true;
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.ReadyRorEncashment = $('#income-summary > tbody > tr', el).length;
+
+                    if (user.ReadyRorEncashment && user.ReadyRorEncashment != 0) {
+                        user.HasBlue = true;
+                        user.Status = "Blue Na!!";
+                    } else
+                        user.ReadyRorEncashment = '-';
+
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
+                }
+
+            }, function (data, status) {
+                downloadState.ReadyForEncashment = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
+            downloadState.ReadyForEncashment = true;
+        }
+
+        if (self.settings.DownloadEncashmentHistory) {
+            getData(self.EncashmentHistoryUrl, function (data, status) {
+                downloadState.EncashmentHistory = true;
+
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.EncashmentHistory = $('#income-summary > tbody > tr', el).length;
+                    if (user.EncashmentHistory == 0) {
+                        user.EncashmentHistory = '-';
+                    }
+
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
+                }
+            }, function (data, status) {
+                downloadState.EncashmentHistory = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
+            downloadState.EncashmentHistory = true;
+        }
+
+        if (self.settings.DownloadInActiveAccounts) {
+            getData(self.InActiveAccntUrl, function (data, status) {
+                downloadState.ActiveAccnt = true;
+                if (status == 200) {
+                    var el = $('<div display="block:none"></div>');
+                    el.html(data);
+                    user.NewEntry = $('#income-summary > tbody > tr', el).length;
+                    if (user.NewEntry == 0) {
+                        user.NewEntry = '-';
+                    }
+                    DoNextIfAllDownloaded(proceedToNext, true, user);
+                } else {
+                    DoNextIfAllDownloaded(proceedToNext, false, user);
+                }
+
+            }, function (data, status) {
+                downloadState.ActiveAccnt = true;
+                DownloadErrorHandle(user);
+            });
+        } else {
             downloadState.ActiveAccnt = true;
-            DownloadErrorHandle(user);
-        });
+        }
     }
 
     function DownloadErrorHandle(user){
