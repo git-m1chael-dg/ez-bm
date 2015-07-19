@@ -5,6 +5,9 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
 
+        $scope.parseMessage = '';
+        $scope.logs = [];
+
         $scope.version = CommonFunc.version();
         $scope.stopEncoding = true;
         $scope.isDone = true;
@@ -16,8 +19,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
         $scope.csvContent = '';
         $scope.accounts = [];
 
-        $scope.parseMessage = '';
-        $scope.logs = [];
+
         $scope.Parse = function () {
             var allTextLines = $scope.csvContent.split(/\r\n|\n/);
             $scope.accounts = [];

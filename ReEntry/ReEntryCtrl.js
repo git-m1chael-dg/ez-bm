@@ -5,6 +5,9 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         self.userCodeCheckerUrl = "http://hpidirectsales.ph/checker.php";
         self.currentRequestIndex = 0;
 
+        $scope.parseMessage = '';
+        $scope.logs = [];
+
         $scope.version = CommonFunc.version();
         $scope.stopEncoding = true;
         $scope.isDone = true;
@@ -16,8 +19,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout,toaster,Co
         $scope.csvContent = '';
         $scope.accounts = [];
 
-        $scope.parseMessage = '';
-        $scope.logs = [];
+
         $scope.Parse = function () {
             var allTextLines = $scope.csvContent.split(/\r\n|\n/);
             $scope.accounts = [];
