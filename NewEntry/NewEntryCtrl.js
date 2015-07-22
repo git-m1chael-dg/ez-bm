@@ -206,9 +206,9 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
 
         function validateInput() {
             var result = $scope.firstName && $scope.lastName &&
-                    $scope.password && $scope.uplineUserCode; //&& $scope.middleName
+                    $scope.password && $scope.uplineUserCode && $scope.teamValue; //&& $scope.middleName
             if(!result){
-                var msg ="Upline user code, username, password, last name and first name are required fields";
+                var msg ="Upline user code, username, password, last name, first name and team are required fields";
                 log(msg);
                 CommonFunc.PopError(msg);
             }
