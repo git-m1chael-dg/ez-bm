@@ -61,8 +61,8 @@
     };
 
     var prod = true;
-    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:33705/ez-bm/';
-
+    var appRoot = prod ? 'http://ez-bm.apphb.com/' : 'http://localhost:63342/ez-bm/';
+    var prefix = '?' + Math.random();
 
     // Loading style definitions
     loadStyles([
@@ -79,21 +79,21 @@
         "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/angularjs-toaster/0.4.9/toaster.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/ng-csv/0.3.2/ng-csv.min.js",
-        appRoot + 'init.js',
-        appRoot + 'Common/models.js',
-        appRoot + 'Common/CommonService.js',
-        appRoot + 'ReEntry/template.js',
-        appRoot + 'ReEntry/Directives.js',
-        appRoot + 'ReEntry/ReEntryCtrl.js',
-        appRoot + 'NewEntry/template.js',
-        appRoot + 'NewEntry/Directives.js',
-        appRoot + 'NewEntry/NewEntryCtrl.js',
-        appRoot + 'AdvanceCode/template.js',
-        appRoot + 'AdvanceCode/Directives.js',
-        appRoot + 'AdvanceCode/AdvanceCodeCtrl.js',
-        appRoot + 'Dashboard/template.js',
-        appRoot + 'Dashboard/Directives.js',
-        appRoot + 'Dashboard/DashboardCtrl.js'
+        appRoot + 'init.js' + prefix,
+        appRoot + 'Common/models.js'+ prefix,
+        appRoot + 'Common/CommonService.js'+ prefix,
+        appRoot + 'ReEntry/template.js'+ prefix,
+        appRoot + 'ReEntry/Directives.js'+ prefix,
+        appRoot + 'ReEntry/ReEntryCtrl.js'+ prefix,
+        appRoot + 'NewEntry/template.js'+ prefix,
+        appRoot + 'NewEntry/Directives.js'+ prefix,
+        appRoot + 'NewEntry/NewEntryCtrl.js'+ prefix,
+        appRoot + 'AdvanceCode/template.js'+ prefix,
+        appRoot + 'AdvanceCode/Directives.js'+ prefix,
+        appRoot + 'AdvanceCode/AdvanceCodeCtrl.js'+ prefix,
+        appRoot + 'Dashboard/template.js'+ prefix,
+        appRoot + 'Dashboard/Directives.js'+ prefix,
+        appRoot + 'Dashboard/DashboardCtrl.js'+ prefix
     ], function() {
         // Manual Initialization of angular app
         if (!angular.element(document).injector()) {
@@ -103,11 +103,16 @@
         }
     });
 
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    try{
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-30142282-2', 'auto');
-    ga('send', 'pageview');
+        ga('create', 'UA-30142282-2', 'auto');
+        ga('send', 'pageview');
+    }catch (ex){
+
+    }
+
 })();
