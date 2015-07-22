@@ -76,16 +76,8 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                 var postData = getPostData(account);
 
 
-                var fd = new FormData();
-                var key;
-                for (key in postData) {
-                    fd.append(key, postData[key]);
-                }
 
-                $http.post(self.PostUrl, fd, {
-                    transformRequest: angular.identity,
-                    headers: {'Content-Type': undefined}
-                }).success(function (data, status) {
+                $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader()).success(function (data, status) {
                     $scope.isDone = true;
                     if (status == 0) {
                         log('No connection. Verify application is hpi is reachable.');
@@ -144,35 +136,36 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
         function inputFieldsAreValid (){
             var isValid = true;
 
-            if(!isValidControlCheckByName("mainupline","Main Upline User Code Here")){
+
+            if(!isValidControlCheckByName("mainsponsor","Main Sponsor User Code")){
                 log("mainupline changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("firstname","First Name Here")){
+            else if(!isValidControlCheckByName("teams",null)){
+                log("mainupline changed");
+                isValid = false;
+            }
+            else if(!isValidControlCheckByName("firstname","Firstname Here")){
                 log("firstname changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("lastname","Last Name Here")){
+            else if(!isValidControlCheckByName("lastname","Lastname Here")){
                 log("lastname changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("password","password")){
+            else if(!isValidControlCheckByName("password","Password Here")){
                 log("password changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("cpassword","verify your password")){
-                log("mainupline changed");
-                isValid = false;
-            }
-            else if(!isValidControlCheckByName("usercode[]","User Code Here")){
+            else if(!isValidControlCheckByName("usercode","Usercode Here")){
                 log("usercode changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("referral[]","Referral Here")){
+            else if(!isValidControlCheckByName("referral","Referral Here	")){
                 log("referral changed");
                 isValid = false;
             }
-            else if(!isValidControlCheckByName("pin[]","PIN Here")){
+            else if(!isValidControlCheckByName("activationpin","Activation Pin Here")){
                 log("pin changed");
                 isValid = false;
             }
@@ -181,16 +174,17 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
 
         function getPostData(account) {
             return {
-                "mainupline": $scope.uplineUserCode,
+                "mainsponsor": $scope.uplineUserCode,
+                teams:14,
+                "usercode": account.UserCode,
+                "password": $scope.password,
+                "referral": account.ReferredBy,
                 "firstname": $scope.firstName,
                 "lastname": $scope.lastName,
-                "password": $scope.password,
-                "cpassword": $scope.password,
-                "usercode[]": account.UserCode,
-                "referral[]": account.ReferredBy,
-                "pin[]": account.ActivationCode,
+                "activationpin": account.ActivationCode,
                 "submit": 'Submit'
             };
+
         }
 
         function validateInput() {
@@ -260,16 +254,9 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
 
         function doPost(account, postData) {
 
-            var fd = new FormData();
-            var key;
-            for (key in postData) {
-                fd.append(key, postData[key]);
-            }
 
-            $http.post(self.PostUrl, fd, {
-                transformRequest: angular.identity,
-                headers: {'Content-Type': undefined}
-            }).success(function (data, status) {
+            $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
+            .success(function (data, status) {
 
                 if (status == 0) {
                     log('No connection. Verify application is hpi is reachable.');
@@ -358,7 +345,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             var valid = false;
             var elements = document.getElementsByName(name);
 
-            if(elements) {
+            if(elements && elements.length > 0) {
                 valid = true;
                 var element = elements[0];
                 if( valid  && element.getAttribute("name") != name)

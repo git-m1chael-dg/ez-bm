@@ -65,10 +65,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
         var postData = getPostData(account);
 
 
-        $http.post(self.PostUrl, postData, {
-            transformRequest: transformToFormEncoding,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function (data, status) {
+        $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
+        .success(function (data, status) {
             $scope.isDone = true;
             if (status == 0) {
                 log('No connection. Verify application is running.');
@@ -151,16 +149,6 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
         };
     }
 
-    function transformToFormEncoding(data) {
-        var key, result = [];
-        for (key in data) {
-            if (data.hasOwnProperty(key)) {
-                result.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
-            }
-        }
-        return result.join("&");
-    }
-
     function next() {
         if (!$scope.stopEncoding)
             $timeout(makeNextRequest, 500);
@@ -188,10 +176,8 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
 
     function doPost(account, postData) {
 
-        $http.post(self.PostUrl, postData, {
-            transformRequest: transformToFormEncoding,
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-        }).success(function (data, status) {
+        $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
+        .success(function (data, status) {
 
             if (status == 0) {
                 log('No connection. Verify application is running.');

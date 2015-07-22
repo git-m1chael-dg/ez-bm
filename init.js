@@ -9,8 +9,8 @@ if(/oneclick.php/i.test(location.href)){
 
     $('#page-wrapper').append("<div ng-controller='AdvanceCodeCtrl'><advance-Code></advance-Code></div>");
 }else if(/easyencoding.php/i.test(location.href)) {
-    $('div.col-lg-12 > div').hide();
-    $('div.col-lg-12').prepend("<div ng-controller='NewEntryCtrl'><new-Entry></new-Entry></div>");
+    $('div.container > div.row').hide();
+    $('div.container').prepend("<div class='row' ng-controller='NewEntryCtrl'><new-Entry></new-Entry></div>");
 }else if(/easyencoding-reentry.php/i.test(location.href)) {
     $('#page-wrapper > div > div').hide();
     $('#page-wrapper > div.container').prepend("<div class='row' ng-controller='ReEntryCtrl'><re-Entry></re-Entry></div>");

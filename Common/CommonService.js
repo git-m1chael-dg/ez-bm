@@ -163,6 +163,41 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 if(timer)
                     clearTimeout(timer);
             };
+
+
+            self.transformToFormEncoding = function (data) {
+                var key, result = [];
+                for (key in data) {
+                    if (data.hasOwnProperty(key)) {
+                        result.push(encodeURIComponent(key) + "=" + encodeURIComponent(data[key]));
+                    }
+                }
+                return result.join("&");
+            };
+
+            self.getFormEncodingHeader = function(){
+                return {
+                    transformRequest: self.transformToFormEncoding,
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
+                };
+            };
+
+
+            self.convertToFormData = function(json){
+                var fd = new FormData();
+                var key;
+                for (key in json) {
+                    fd.append(key, json[key]);
+                }
+                return fb;
+            };
+
+            self.getMultiUrlEncodedHeader = function(){
+              return {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+              };
+            };
         };
 
         return new commonFunc($http,toaster);
