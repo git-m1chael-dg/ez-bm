@@ -83,6 +83,13 @@ newEntryTemplate += "                                <input type=\"text\" id=\"u
 newEntryTemplate += "                                   ng-model=\"password\"\/>";
 newEntryTemplate += "                            <\/div>";
 newEntryTemplate += "                        <\/div>";
+newEntryTemplate += "                        <div class=\"form-group\">";
+newEntryTemplate += "                            <label for=\"txtTeam\" class=\"col-sm-2 control-label\">Team<\/label>";
+newEntryTemplate += "                            <div class=\"col-sm-10\">";
+newEntryTemplate += "                                <input type=\"text\" id=\"txtTeam\" class=\"form-control\"";
+newEntryTemplate += "                                       ng-model=\"teamDisplay\" disabled\/>";
+newEntryTemplate += "                            <\/div>";
+newEntryTemplate += "                        <\/div>";
 newEntryTemplate += "                    <\/form>";
 newEntryTemplate += "                <\/div>";
 newEntryTemplate += "            <\/div>";
@@ -160,7 +167,7 @@ newEntryTemplate += "                                <input type=\"checkbox\" ng
 newEntryTemplate += "                            <\/th>";
 newEntryTemplate += "                            <th>";
 newEntryTemplate += "                                <button ng-click=\"EncodeOneItem(account)\" ng-disabled=\"!isDone || !enableEncodeOneItem\">";
-newEntryTemplate += "                                    Encode";
+newEntryTemplate += "                                    {{account.EncodeBtn}}";
 newEntryTemplate += "                                <\/button>";
 newEntryTemplate += "                            <\/th>";
 newEntryTemplate += "                        <\/tr>";

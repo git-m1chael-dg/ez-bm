@@ -15,6 +15,8 @@ function Account(index, userCode, referredBy, activationCode, status, wasEncoded
         self.ReferredBy = self.ReferredBy.toUpperCase();
         self.ActivationCode = self.ActivationCode.toUpperCase();
     }
+
+    self.EncodeBtn = "Encode";
 }
 
 function User(index, userName, password) {

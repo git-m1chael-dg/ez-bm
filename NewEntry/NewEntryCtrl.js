@@ -21,6 +21,10 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
         /*$scope.middleName = '';*/
         $scope.lastName = '';
         $scope.password = '';
+        $scope.teamDisplay = '';
+        $scope.teamValue = '';
+
+        getTeam();
 
         $scope.csvContent = '';
         $scope.accounts = [];
@@ -75,10 +79,11 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
 
                 var postData = getPostData(account);
 
-
+                account.EncodeBtn = "Encoding";
 
                 $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader()).success(function (data, status) {
                     $scope.isDone = true;
+                    account.EncodeBtn = "Encode";
                     if (status == 0) {
                         log('No connection. Verify application is hpi is reachable.');
                     } else if (status == 401) {
@@ -110,6 +115,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                     }
                     log("Failure. User code : " + account.UserCode);
                     $scope.isDone = true;
+                    account.EncodeBtn = "Encode";
                     CommonFunc.PopError("Failure. User code : " + account.UserCode);
                 });
 
@@ -172,17 +178,28 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             return isValid;
         }
 
+        function getTeam(){
+
+            var option = $('[name=teams] option').filter(function() {
+                return ($(this).text() == 'SAUDI GRIFFIN'); //To select SAUDI GRIFFIN
+            });
+
+            $scope.teamValue = option.prop('value');
+            $scope.teamDisplay = option.prop('value') + '-' + option.text();
+
+        }
+
         function getPostData(account) {
             return {
-                "mainsponsor": $scope.uplineUserCode,
-                teams:14,
-                "usercode": account.UserCode,
-                "password": $scope.password,
-                "referral": account.ReferredBy,
-                "firstname": $scope.firstName,
-                "lastname": $scope.lastName,
-                "activationpin": account.ActivationCode,
-                "submit": 'Submit'
+                mainsponsor: $scope.uplineUserCode,
+                teams:$scope.teamValue,
+                usercode: account.UserCode,
+                password: $scope.password,
+                referral: account.ReferredBy,
+                firstname: $scope.firstName,
+                lastname: $scope.lastName,
+                activationpin: account.ActivationCode,
+                submit: 'Submit'
             };
 
         }
@@ -244,7 +261,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                 }
 
                 var postData = getPostData(account);
-
+                account.EncodeBtn = "Encoding";
                 doPost(account, postData);
             }else {
                 $scope.isDone = true;
@@ -258,6 +275,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
             .success(function (data, status) {
 
+                account.EncodeBtn = "Encode";
                 if (status == 0) {
                     log('No connection. Verify application is hpi is reachable.');
                 } else if (status == 401) {
@@ -279,7 +297,9 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
                     } else
                         $scope.isDone = true;
                 }
+
             }).error(function (data, status) {
+                account.EncodeBtn = "Encode";
                 if (status == 0) {
                     log('No connection. Verify application is hpi is reachable.');
                 } else if (status == 401) {
