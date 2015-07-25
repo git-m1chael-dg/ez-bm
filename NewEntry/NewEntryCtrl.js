@@ -69,7 +69,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
         };
 
         $scope.EncodeOneItem = function (account) {
-            if (validateInput()) {
+            if (validateInput() && CommonFunc.isValidateUserCode(account)) {
 
                 $scope.isDone = false;
                 $scope.stopEncoding = false;
@@ -255,18 +255,21 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             if (self.currentRequestIndex < $scope.accounts.length) {
                 var account = $scope.accounts[self.currentRequestIndex];
                 if (account.WasEncoded) {
+                    account.EncodeBtn = "Encode";
                     self.currentRequestIndex++;
                     next();
                     return;
                 }
 
-                var postData = getPostData(account);
-                account.EncodeBtn = "Encoding";
-                doPost(account, postData);
-            }else {
-                $scope.isDone = true;
-                $scope.stopEncoding = false;
+                if (CommonFunc.isValidateUserCode(account)) {
+                    var postData = getPostData(account);
+                    account.EncodeBtn = "Encoding";
+                    doPost(account, postData);
+                    return;
+                }
             }
+            $scope.isDone = true;
+            $scope.stopEncoding = false;
         }
 
         function doPost(account, postData) {

@@ -94,10 +94,10 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 {{account.Index}}
                             </th>
                             <th>
-                                <input type="input" ng-model="account.UserCode"/>
+                                <input type="input" ng-model="account.UserCode" maxlength="20"/>
                             </th>
                             <th>
-                                <input type="input" ng-model="account.ReferredBy"/>
+                                <input type="input" ng-model="account.ReferredBy" maxlength="20"/>
                             </th>
                             <th>
                                 <input type="input" ng-model="account.ActivationCode"
@@ -110,8 +110,8 @@ http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-conve
                                 <input type="checkbox" ng-model="account.WasEncoded"/>
                             </th>
                             <th>
-                                <button ng-click="EncodeOneItem(account)" ng-disabled="!isDone || !enableEncodeOneItem">
-                                    Encode
+                                <button ng-click="EncodeOneItem(account)">
+                                    {{account.EncodeBtn}}
                                 </button>
                             </th>
                         </tr>

@@ -57,6 +57,10 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
 
     $scope.EncodeOneItem = function (account) {
 
+        if (CommonFunc.isValidateUserCode(account) == false)
+            return;
+
+        account.EncodeBtn = "Encoding";
         $scope.isDone = false;
         $scope.stopEncoding = false;
 
@@ -66,41 +70,43 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
 
 
         $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
-        .success(function (data, status) {
-            $scope.isDone = true;
-            if (status == 0) {
-                log('No connection. Verify application is running.');
-            } else if (status == 401) {
-                log('Unauthorized');
-            } else if (status == 405) {
-                log('HTTP verb not supported [405]');
-            } else if (status == 500) {
-                log('Internal Server Error [500].');
-            } else {
-                var success = isSuccess(account, data);
-                if (success) {
-                    log("Successfully encoded. User code : " + account.UserCode);
-                    CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
+            .success(function (data, status) {
+                $scope.isDone = true;
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
                 } else {
-                    CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    var success = isSuccess(account, data);
+                    if (success) {
+                        log("Successfully encoded. User code : " + account.UserCode);
+                        CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
+                    } else {
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    }
                 }
-            }
-        }).error(function (data, status) {
-            if (status == 0) {
-                log('No connection. Verify application is running.');
-            } else if (status == 401) {
-                log('Unauthorized');
-            } else if (status == 405) {
-                log('HTTP verb not supported [405]');
-            } else if (status == 500) {
-                log('Internal Server Error [500].');
-            } else {
-                log(data);
-            }
-            log("Failure. User code : " + account.UserCode);
-            $scope.isDone = true;
-            CommonFunc.PopError("Failure. User code : " + account.UserCode);
-        });
+                account.EncodeBtn = "Encode";
+            }).error(function (data, status) {
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    log(data);
+                }
+                log("Failure. User code : " + account.UserCode);
+                $scope.isDone = true;
+                CommonFunc.PopError("Failure. User code : " + account.UserCode);
+                account.EncodeBtn = "Encode";
+            });
 
     };
 
@@ -160,62 +166,67 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
         if (self.currentRequestIndex < $scope.accounts.length) {
             var account = $scope.accounts[self.currentRequestIndex];
             if (account.WasEncoded) {
+                account.EncodeBtn = "Encode";
                 self.currentRequestIndex++;
                 next();
                 return;
             }
 
-            var postData = getPostData(account);
+            if (CommonFunc.isValidateUserCode(account)) {
+                var postData = getPostData(account);
 
-            doPost(account, postData);
-        } else {
-            $scope.isDone = true;
-            $scope.stopEncoding = false;
+                account.EncodeBtn = "Encoding";
+                doPost(account, postData);
+                return;
+            }
         }
+        $scope.isDone = true;
+        $scope.stopEncoding = false;
     }
 
     function doPost(account, postData) {
 
         $http.post(self.PostUrl, postData, CommonFunc.getFormEncodingHeader())
-        .success(function (data, status) {
-
-            if (status == 0) {
-                log('No connection. Verify application is running.');
-            } else if (status == 401) {
-                log('Unauthorized');
-            } else if (status == 405) {
-                log('HTTP verb not supported [405]');
-            } else if (status == 500) {
-                log('Internal Server Error [500].');
-            } else {
-                var success = isSuccess(account, data);
-                if (success) {
-                    log("Successfully encoded. User code : " + account.UserCode);
-                    self.currentRequestIndex++;
+            .success(function (data, status) {
+                account.EncodeBtn = "Encode";
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
                 } else {
-                    CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    var success = isSuccess(account, data);
+                    if (success) {
+                        log("Successfully encoded. User code : " + account.UserCode);
+                        self.currentRequestIndex++;
+                    } else {
+                        CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                    }
+                    if (success && self.currentRequestIndex < $scope.accounts.length) {
+                        next();
+                    } else
+                        $scope.isDone = true;
                 }
-                if (success && self.currentRequestIndex < $scope.accounts.length) {
-                    next();
-                } else
-                    $scope.isDone = true;
-            }
-        }).error(function (data, status) {
-            if (status == 0) {
-                log('No connection. Verify application is running.');
-            } else if (status == 401) {
-                log('Unauthorized');
-            } else if (status == 405) {
-                log('HTTP verb not supported [405]');
-            } else if (status == 500) {
-                log('Internal Server Error [500].');
-            } else {
-                log(data);
-            }
-            log("Failure. User code : " + account.UserCode);
-            $scope.isDone = true;
-            CommonFunc.PopError("Failure. User code : " + account.UserCode);
-        });
+            }).error(function (data, status) {
+                account.EncodeBtn = "Encode";
+                if (status == 0) {
+                    log('No connection. Verify application is running.');
+                } else if (status == 401) {
+                    log('Unauthorized');
+                } else if (status == 405) {
+                    log('HTTP verb not supported [405]');
+                } else if (status == 500) {
+                    log('Internal Server Error [500].');
+                } else {
+                    log(data);
+                }
+                log("Failure. User code : " + account.UserCode);
+                $scope.isDone = true;
+                CommonFunc.PopError("Failure. User code : " + account.UserCode);
+            });
     }
 
     function isSuccess(account, response) {

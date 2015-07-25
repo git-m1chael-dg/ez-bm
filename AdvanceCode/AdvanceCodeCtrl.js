@@ -61,7 +61,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
             $scope.stopEncoding = false;
 
             account.MakeUpperCase();
-
+            account.EncodeBtn = "Encoding";
             var postData = getPostData(account);
 
 
@@ -75,6 +75,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).success(function (data, status) {
+                account.EncodeBtn = "Encode";
                 $scope.isDone = true;
                 if (status == 0) {
                     log('No connection. Verify application is running.');
@@ -94,6 +95,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                     }
                 }
             }).error(function (data, status) {
+                account.EncodeBtn = "Encode";
                 if (status == 0) {
                     log('No connection. Verify application is running.');
                 } else if (status == 401) {
@@ -169,10 +171,12 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                 var account = $scope.accounts[self.currentRequestIndex];
                 if (account.WasEncoded) {
                     self.currentRequestIndex++;
+                    account.EncodeBtn = "Encode";
                     next();
                     return;
                 }
 
+                account.EncodeBtn = "Encoding";
                 var postData = getPostData(account);
 
                 doPost(account, postData);
@@ -194,7 +198,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).success(function (data, status) {
-
+                account.EncodeBtn = "Encode";
                 if (status == 0) {
                     log('No connection. Verify application is running.');
                 } else if (status == 401) {
@@ -217,6 +221,7 @@ hpiModule.controller('AdvanceCodeCtrl', function ($scope, $http, $timeout,toaste
                         $scope.isDone = true;
                 }
             }).error(function (data, status) {
+                account.EncodeBtn = "Encode";
                 if (status == 0) {
                     log('No connection. Verify application is running.');
                 } else if (status == 401) {

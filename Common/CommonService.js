@@ -6,6 +6,15 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
               return "1.8";
             };
 
+            self.isValidateUserCode = function(account){
+                var valid = true;
+                if(account.UserCode.length > 20 || account.ReferredBy.length > 20 ) {
+                    account.Status == "Invalid user code or referral. Max 20 characters only";
+                    valid = false;
+                }
+                return valid;
+            };
+
             self.validateActivationCode = function (account) {
 
                 account.ActivationCode = account.ActivationCode.trim();
@@ -24,9 +33,13 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                     account.ActivationCode = self.setCharAt(account.ActivationCode, 11, 'O');
                 }
                 //valid code
-                if (/[A-Z]{3}\d{6}[A-Z]{3}/i.test(account.ActivationCode)) {
+                if (/[A-Z]{1,3}\d{6}[A-Z]{3}/i.test(account.ActivationCode)) {
                     if (account.Status == "Invalid activation code")
                         account.Status = "";
+
+                    if(self.isValidateUserCode(account) == false ) {
+                        return false;
+                    }
                     return true;
                 }
 
