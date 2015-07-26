@@ -327,7 +327,7 @@ hpiModule.controller('NewEntryCtrl', function ($scope, $http, $timeout,toaster,C
             if ((m = /([a-zA-Z0-9, -]*please try again]*)/i.exec(response)) !== null) {
                 var message = m[1];
 
-                account.WasEncoded = false;
+                account.WasEncoded = 'Account already exist, please try again' == message;
                 account.Status = message;
             }else if ((m = /([a-zA-Z0-9, -]*successfully[a-zA-Z ]*)/i.exec(response)) !== null) {
                 var message = m[1];
