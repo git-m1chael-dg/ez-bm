@@ -108,7 +108,7 @@ advanceCodeTemplate += "                            <th>";
 advanceCodeTemplate += "                                <input type=\"checkbox\" ng-model=\"account.WasEncoded\"\/>";
 advanceCodeTemplate += "                            <\/th>";
 advanceCodeTemplate += "                            <th>";
-advanceCodeTemplate += "                                <button ng-click=\"EncodeOneItem(account)\" ng-disabled=\"!isDone || !enableEncodeOneItem\">";
+advanceCodeTemplate += "                                <button ng-click=\"EncodeOneItem(account)\">";
 advanceCodeTemplate += "                                    {{account.EncodeBtn}}";
 advanceCodeTemplate += "                                <\/button>";
 advanceCodeTemplate += "                            <\/th>";
