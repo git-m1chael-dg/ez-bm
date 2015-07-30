@@ -56,6 +56,8 @@ reEntryTemplate += "                        <\/button>";
 reEntryTemplate += "                        <button type=\"button\" class=\"btn btn btn-default\" ng-csv=\"getArrayForCsv()\" filename=\"encoded.csv\"";
 reEntryTemplate += "                                csv-header=\"['User Code', 'Referred By', 'Activation Code']\">Export";
 reEntryTemplate += "                        <\/button>";
+reEntryTemplate += "                        <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"EncodeBy10()\" ng-disabled=\"!isDone\">Encode By 10";
+reEntryTemplate += "                        <\/button>";
 reEntryTemplate += "                    <\/div>";
 reEntryTemplate += "                    <table class=\"table\">";
 reEntryTemplate += "                        <thead>";

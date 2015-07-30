@@ -87,6 +87,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
                         CommonFunc.PopSuccess("Success. User code : " + account.UserCode);
                     } else {
                         CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                        account.WasEncoded = 'Account already exist, please try again' == account.Status.trim();
                     }
                 }
                 account.EncodeBtn = "Encode";
@@ -108,6 +109,17 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
                 account.EncodeBtn = "Encode";
             });
 
+    };
+
+    $scope.EncodeBy10 = function () {
+        var count = 0;
+
+        angular.forEach($scope.accounts, function (account) {
+            if (account.WasEncoded == false && count < 10) {
+                $scope.EncodeOneItem(account);
+                count++;
+            }
+        });
     };
 
     $scope.ActivationCodeChange = function (account) {
@@ -204,6 +216,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
                         self.currentRequestIndex++;
                     } else {
                         CommonFunc.PopError("Failed encoding of User code : " + account.UserCode);
+                        account.WasEncoded = 'Account already exist, please try again' == account.Status.trim();
                     }
                     if (success && self.currentRequestIndex < $scope.accounts.length) {
                         next();
@@ -235,8 +248,7 @@ hpiModule.controller('ReEntryCtrl', function ($scope, $http, $timeout, toaster, 
         account.IsSuccess = false;
         if ((m = /([a-zA-Z0-9, -]*please try again]*)/i.exec(response)) !== null) {
             var message = m[1];
-
-            account.WasEncoded = 'Account already exist, please try again' == message;
+            account.WasEncoded = false;
             account.Status = message;
         } else if ((m = /([a-zA-Z0-9, -]*successfully[a-zA-Z ]*)/i.exec(response)) !== null) {
             var message = m[1];

@@ -114,6 +114,8 @@ newEntryTemplate += "                        <\/button>";
 newEntryTemplate += "                        <button type=\"button\" class=\"btn btn btn-default\" ng-csv=\"getArrayForCsv()\" filename=\"encoded.csv\"";
 newEntryTemplate += "                                csv-header=\"['User Code', 'Referred By', 'Activation Code']\">Export";
 newEntryTemplate += "                        <\/button>";
+newEntryTemplate += "                        <button type=\"submit\" class=\"btn btn-primary\" ng-click=\"EncodeBy10()\" ng-disabled=\"!isDone\">Encode By 10";
+newEntryTemplate += "                        <\/button>";
 newEntryTemplate += "                    <\/div>";
 newEntryTemplate += "                    <table class=\"table\">";
 newEntryTemplate += "                        <thead>";
