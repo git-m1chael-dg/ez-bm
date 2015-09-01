@@ -93,7 +93,10 @@
         appRoot + 'AdvanceCode/AdvanceCodeCtrl.js'+ prefix,
         appRoot + 'Dashboard/template.js'+ prefix,
         appRoot + 'Dashboard/Directives.js'+ prefix,
-        appRoot + 'Dashboard/DashboardCtrl.js'+ prefix
+        appRoot + 'Dashboard/DashboardCtrl.js'+ prefix,
+        appRoot + 'OneDashboard/template.js'+ prefix,
+        appRoot + 'OneDashboard/Directives.js'+ prefix,
+        appRoot + 'OneDashboard/DashboardCtrl.js'+ prefix
     ], function() {
         // Manual Initialization of angular app
         if (!angular.element(document).injector()) {

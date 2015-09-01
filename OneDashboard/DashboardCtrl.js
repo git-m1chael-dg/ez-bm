@@ -1,14 +1,14 @@
-hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster, CommonFunc) {
+hpiModule.controller('OneDashboardCtrl', function ($scope, $http, $timeout, toaster, CommonFunc) {
 
     var self = this;
-    self.LoginUrl = "http://hpidirectsales.ph/hpi_dashboard/index.php";
-    self.DahsboardUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/index.php";
-    self.WalletUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/wallet.php";
-    self.MyEarningUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/myearnings.php";
-    self.ReadyForEncashmentUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/ready-for-encashment.php";
-    self.EncashmentHistoryUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/encashment-history.php";
-    self.InActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/newly-encoded.php";
-    self.ActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/actives.php";
+    self.LoginUrl = "http://hpidirectsales.ph/hpi_dashboard/one_login.php";
+    self.DahsboardUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/oneindex.php";
+    self.WalletUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/onewallet.php";
+    self.MyEarningUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/myoneearnings.php";
+    self.ReadyForEncashmentUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/encashment_one.php";
+    self.EncashmentHistoryUrl = "";
+    self.InActiveAccntUrl = "";
+    self.ActiveAccntUrl = "http://hpidirectsales.ph/hpi_dashboard/pages/oneclickindex.php";
 
     // settings
     self.settings = $scope.settings = new DashboardSetting();
@@ -155,7 +155,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
             return;
         }
 
-        $scope.csvContent = localStorage["ez-bm.users"];
+        $scope.csvContent = localStorage["ez-bm.one.users"];
     }
 
     loadData();
@@ -173,7 +173,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
             return;
         }
 
-        localStorage["ez-bm.users"] = $scope.csvContent;
+        localStorage["ez-bm.one.users"] = $scope.csvContent;
     }
 
     function inputFieldsAreValid() {
@@ -285,7 +285,7 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
     function isSuccess(user, response) {
         user.IsError = true;
         user.IsSuccess = false;
-        if (/location.href="pages/i.exec(response)) {
+        if (/location.href="pages/i.exec(response)) { //pages/oneindex.php
             user.IsError = false;
             return true;
         } else if (response.indexOf("max_user_connections") > -1) {
@@ -368,8 +368,9 @@ hpiModule.controller('DashboardCtrl', function ($scope, $http, $timeout, toaster
                     var lastPayoutRbAmount = $('#Rbonus > table > tbody > tr:last-child > td:nth-child(1)', el).text();
                     var lastPayoutRbDate = $('#Rbonus > table > tbody > tr:last-child > td:nth-child(2)', el).text();
                     user.TotalQB = $('#MBonus > h4 > span', el).text();
-                    user.TotalRebates =  currentRb + "(" +  lastPayoutRbAmount + "/" + lastPayoutRbDate + ")";
+                    user.TotalRebates = currentRb + "(" + lastPayoutRbAmount + "/" + lastPayoutRbDate + ")";
                     user.TotalProductVoucher = $('#Pvouchers > h4 > span', el).text();
+                    user.RbIsWithInAWeek = CommonFunc.isDateWith7Days(lastPayoutRbDate);
 
                     //clean up
                     if (user.TotalRebates.trim() == "P(/)" || user.TotalRebates.trim() == "P (/)")

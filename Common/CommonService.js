@@ -211,6 +211,16 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                   headers: {'Content-Type': undefined}
               };
             };
+
+            self.isDateWith7Days = function(rbDate){ // YYYY-MM-DD
+                var value = rbDate.split('-');
+                var inputDate = new Date(value[0], value[1]-1, value[2]);
+                var today = new Date();
+                var endDate = new Date(today.getYear(), today.getMonth(), today.getDate());
+                endDate.setDate(endDate.getDate() - 7);
+
+                return inputDate >= endDate;
+            }
         };
 
         return new commonFunc($http,toaster);

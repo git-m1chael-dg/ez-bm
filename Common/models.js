@@ -34,6 +34,7 @@ function User(index, userName, password) {
     self.ReadyRorEncashment  = '';
     self.EncashmentHistory  = '';
     self.ActiveAccnt = '';
+    self.RbIsWithInAWeek = false;
 
     self.IsError = false;
     self.IsSuccess = false;

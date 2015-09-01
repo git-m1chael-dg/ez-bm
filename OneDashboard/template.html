@@ -1,0 +1,229 @@
+<!--to convert go here :
+http://www.accessify.com/tools-and-wizards/developer-tools/html-javascript-convertor/
+-->
+<toaster-container toaster-options="{'time-out': 3000}"></toaster-container>
+
+<div>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <b>HPI Encoder ver {{version}}</b>
+        </div>
+    </div>
+    <div class="row clearfix" ng-hide="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            WARNING : the input fields were change since the last update. Pls contact Mike to fix this. You know
+            where you can find me.
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Step 1 : Input the CSV to parse
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <form role="form">
+                        <div class="form-group">
+                            <label for="csvText">Paste CSV content here</label>
+                            <textarea class="form-control" id="csvText" ng-model="csvContent"></textarea>
+                        </div>
+                        <div class="btn-group" role="group" aria-label="...">
+                            <button type="submit" class="btn btn-primary" ng-click="Parse()">Parse</button>
+                            <button type="submit" class="btn btn-default" ng-click="csvContent=''">Clear</button>
+                        </div>
+                        <span ng-show="parseMessage!=''" class="text-danger">{{parseMessage}}</span>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Step 2 : User Dasboard
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="submit" class="btn btn-primary" ng-click="Download()" ng-disabled="!isDone">
+                            Download All
+                        </button>
+                        <button type="submit" class="btn btn-danger" ng-click="Stop()">Stop
+                        </button>
+                        <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()"
+                                filename="dashboard.csv"
+                                csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">
+                            Export
+                        </button>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 col-md-offset-2">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadActiveAccounts"/> Download Active
+                                    Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadReadyForEncashment"/> Download
+                                    Ready for Encashment Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadEncashmentHistory" disabled/> Download
+                                    Encashment History/Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadInActiveAccounts" disabled/> Download In
+                                    Active Accounts?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadWallet"/> Download E-Wallet?
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" ng-model="settings.DownloadMyEarning"/> Download My Earnings?
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>
+                                #
+                            </th>
+                            <th>
+                                User Name
+                            </th>
+                            <th>
+                                Password
+                            </th>
+                            <th>Wallet</th>
+                            <th>
+                                Total QB
+                            </th>
+                            <th>
+                                Total Rebates
+                            </th>
+                            <th>
+                                Total Product Voucher
+                            </th>
+                            <th>
+                                Active Accounts
+                            </th>
+                            <th>
+                                New Entry Code
+                            </th>
+                            <th>
+                                Ready For Encashment
+                            </th>
+                            <th>
+                                Encashment History
+                            </th>
+                            <th>
+                                Status
+                            </th>
+                            <th>
+                                <input type="checkbox" ng-change="selectAllFn(selectAll)"
+                                       ng-checked="isSelectedAll()" ng-model="selectAll"/> Skip?
+                            </th>
+                            <th>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="user in users">
+                            <td>
+                                {{user.Index}}
+                            </td>
+                            <td>
+                                <input type="input" ng-model="user.UserName"/>
+                            </td>
+                            <td>
+                                <input type="input" ng-model="user.Password"/>
+                            </td>
+                            <td>{{user.Wallet}}</td>
+                            <td>
+                                {{user.TotalQB}}
+                            </td>
+                            <td ng-class="{info: user.RbIsWithInAWeek}">
+                                {{user.TotalRebates}}
+                            </td>
+                            <td>
+                                {{user.TotalProductVoucher}}
+                            </td>
+                            <td>
+                                {{user.ActiveAccnt}}
+                            </td>
+                            <td>
+                                {{user.NewEntry}}
+                            </td>
+                            <td ng-class="{info: user.HasBlue}">
+                                {{user.ReadyRorEncashment}}
+                            </td>
+                            <td>
+                                {{user.EncashmentHistory}}
+                            </td>
+                            <td ng-class="{danger: user.IsError, success: user.IsSuccess}">
+                                {{user.Status}}
+                            </td>
+                            <td>
+                                <input type="checkbox" ng-model="user.WasDownloaded"/>
+                            </td>
+                            <td>
+                                <button ng-click="LoginToDownloadOneItem(user)" ng-disabled="!isDone">
+                                    {{user.DownloadBtn}}
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="btn-group" role="group" aria-label="...">
+                        <button type="submit" class="btn btn-primary" ng-click="Download()" ng-disabled="!isDone">
+                            Download All
+                        </button>
+                        <button type="submit" class="btn btn-danger" ng-click="Stop()">Stop
+                        </button>
+                        <button type="button" class="btn btn btn-default" ng-csv="getArrayForCsv()"
+                                filename="dashboard.csv"
+                                csv-header="['Username', 'TotalQB', 'Rebates', 'TotalProductVoucher','ActiveAccnt','NewEntry','ReadyRorEncashment','EncashmentHistory']">
+                            Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix" ng-show="isInputFieldsAreValid">
+        <div class="col-md-12 column">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Logs
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <table>
+                        <tr ng-repeat="log in logs.slice().reverse() track by $index">
+                            <th>
+                                {{log}}
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
