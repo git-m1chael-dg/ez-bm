@@ -3,7 +3,7 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
             var self = this;
 
             self.version =  function(){
-              return "1.20150730";
+              return "1.20150901";
             };
 
             self.isValidateUserCode = function(account){
@@ -219,7 +219,10 @@ hpiModule.service('CommonFunc', function ($http,toaster) {
                 var endDate = new Date(today.getYear(), today.getMonth(), today.getDate());
                 endDate.setDate(endDate.getDate() - 7);
 
-                return inputDate >= endDate;
+
+                return inputDate.getYear() >= endDate.getYear() &&
+                inputDate.getMonth() >= endDate.getMonth() &&
+                inputDate.getDate() >= endDate.getDate();
             }
         };
 
